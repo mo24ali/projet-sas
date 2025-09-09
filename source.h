@@ -88,7 +88,7 @@ void ajouter_un_nouveau_joueur(Equipe eq, Joueur j)
     {
         for (int i = 0; i < eq.effective; i++)
         {
-
+            
         }
     }
 }
