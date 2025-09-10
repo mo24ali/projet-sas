@@ -81,20 +81,40 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
     return j;
 }
 
-Equipe init_equipe(int eff)
+Equipe init_equipe(int capacite)
 {
     Equipe e;
-    e.effective = eff;
-    e.capacite = eff;
-    e.joueur = (Joueur *)malloc(sizeof(Joueur) * e.capacite);
+    e.effective = 0;
+    e.capacite = (capacite > 0) ? capacite : 10;
+    e.joueur = malloc(sizeof(Joueur) * e.capacite);
+    if (!e.joueur) {
+        fprintf(stderr, "Erreur allocation memoire pour l'equipe\n");
+        exit(EXIT_FAILURE);
+    }
     return e;
 }
 
 // genere id
 int genere_id()
 {
-    int tmp = 1;
+    static int tmp = 1;
     return tmp++;
+}
+// supprime le '\n' final s'il existe
+void trim_newline(char *s) {
+    size_t len = strlen(s);
+    if (len == 0) return;
+    if (s[len-1] == '\n') s[len-1] = '\0';
+}
+
+// lecture sûre d'une ligne (fgets + trim)
+void lire_chaine(const char *invite, char *buf, size_t size) {
+    if (invite) printf("%s", invite);
+    if (fgets(buf, (int)size, stdin) == NULL) {
+        buf[0] = '\0';
+    } else {
+        trim_newline(buf);
+    }
 }
 
 //  AJOUTER JOUEUR
@@ -115,93 +135,83 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     int choix_pos;
     int j_insc, m_insc, a_insc;
 
-    getchar();
+    lire_chaine("Entrez le nom :\n", nom, sizeof(nom));
+    lire_chaine("Entrez le prenom :\n", prenom, sizeof(prenom));
 
-    printf("entrez le nom : \n");
-    fgets(nom, sizeof(nom), stdin);
-    // getchar();
+    // lire entiers - on utilise fgets + sscanf pour éviter les restes dans stdin
+    char tmp[64];
 
-    printf("entrez le prenom : \n");
-    fgets(prenom, sizeof(prenom), stdin);
-    getchar();
+    lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &maillot) != 1) maillot = 0;
 
-    printf("entrez le numero de maillot\n");
-    scanf("%d", &maillot);
-    // getchar();
-
-    printf("entrez l'annee de  naissance:\n");
-    scanf("%d", &annee_de_naissance);
-    // getchar();
+    lire_chaine("Entrez l'annee de naissance :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &annee_de_naissance) != 1) annee_de_naissance = 2000;
 
     age = calculer_age(annee_de_naissance);
-    printf("entrez le numero des buts \n");
-    scanf("%d", &num_buts);
-    // getchar();
 
-    printf("Entrez le jour de l'inscription : \n");
-    scanf("%d", &j_insc);
-    // getchar();
+    lire_chaine("Entrez le nombre de buts :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &num_buts) != 1) num_buts = 0;
 
-    printf("Entrez le mois de l'inscription : \n");
-    scanf("%d", &m_insc);
-    // getchar();
+    lire_chaine("Entrez le jour de l'inscription :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &j_insc) != 1) j_insc = 1;
 
-    printf("Entrez l'annee d'inscription : \n");
-    scanf("%d", &a_insc);
-    getchar();
+    lire_chaine("Entrez le mois de l'inscription :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &m_insc) != 1) m_insc = 1;
+
+    lire_chaine("Entrez l'annee d'inscription :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &a_insc) != 1) a_insc = 2025;
 
     Date dt = init_date_1(j_insc, m_insc, a_insc);
-    printf("Le joueur est titulaire ou remplacant ? \n");
-    fgets(status, sizeof(status), stdin);
-    getchar();
 
-    printf(" 1. gardien . \n 2. defeseur . \n 3. millieu . \n 4. attaquant");
-    printf("entrez la position du joueur : \n");
-    scanf("%d", &choix_pos);
+    lire_chaine("Le joueur est titulaire ou remplacant ?\n", status, sizeof(status));
+
+    // Choix poste
+    lire_chaine("1) gardien  2) defenseur  3) milieu  4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
+    if (sscanf(tmp, "%d", &choix_pos) != 1) choix_pos = 4;
     switch (choix_pos)
     {
-
-    case 1:
-        strcpy(pos, postes[0]);
-        break;
-    case 2:
-        strcpy(pos, postes[1]);
-        break;
-    case 3:
-        strcpy(pos, postes[2]);
-        break;
-    case 4:
-        strcpy(pos, postes[3]);
-        break;
-    default:
-        printf("choix invalide");
-        break;
+    case 1: strcpy(pos, postes[0]); break;
+    case 2: strcpy(pos, postes[1]); break;
+    case 3: strcpy(pos, postes[2]); break;
+    case 4: strcpy(pos, postes[3]); break;
+    default: strcpy(pos, postes[3]); break;
     }
 
     j = init_joueur(id, nom, prenom, maillot, pos, age, num_buts, dt, status);
 
+    // si besoin, agrandir (ton code faisait ça déjà)
     if (eq->effective >= eq->capacite)
     {
-        eq->capacite *= 2;
-        eq->joueur = realloc(eq->joueur, sizeof(Joueur) * eq->capacite);
-        if (!eq->joueur)
-        {
+        int newcap = eq->capacite * 2;
+        Joueur *tmpj = realloc(eq->joueur, sizeof(Joueur) * newcap);
+        if (!tmpj) {
             printf("Erreur allocation memoire\n");
-            exit(EXIT_FAILURE);
+            return;
         }
+        eq->joueur = tmpj;
+        eq->capacite = newcap;
     }
 
     eq->joueur[eq->effective++] = j;
-
     printf("Joueur ajoute avec succes ! ID = %d\n", j.id);
 }
+
 // AFFICHER JOUEUR
 void show_player(Joueur j)
 {
-    printf(" => Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ", j.prenom, j.nom, j.id,j.poste, j.num_maillot, j.statut, j.age, j.buts);
+    printf(" => Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ",
+           j.prenom[0] ? j.prenom : "(nil)",
+           j.nom[0] ? j.nom : "(nil)",
+           j.id,
+           j.poste[0] ? j.poste : "(nil)",
+           j.num_maillot,
+           j.statut[0] ? j.statut : "(nil)",
+           j.age,
+           j.buts);
     afficher_date(j.dateInscription);
     printf("\n");
 }
+
 // Trier les joueurs par ordre alphabétique (Nom).
 void swap(Joueur *a, Joueur *b)
 {
@@ -254,12 +264,23 @@ void trier_les_joueurs_par_age(Equipe *eq)
 // Afficher equipe
 void afficher_equipe(Equipe eq)
 {
-    for (int i = 0; i < eq.effective; i++)
-    {
-        printf("%s : \n", eq.joueur[i].poste);
+    if (eq.effective == 0) {
+        printf("Aucun joueur dans l'equipe.\n");
+        return;
+    }
+
+    printf("\n=================== LISTE DES JOUEURS ===================\n");
+    printf("%-4s | %-12s | %-12s | %-8s | %-6s | %-9s | %-3s | %-4s | %-12s\n",
+           "ID", "Nom", "Prenom", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
+    printf("---------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < eq.effective; i++) {
         show_player(eq.joueur[i]);
     }
+
+    printf("==========================================================\n\n");
 }
+
 // Afficher les joueurs par poste.
 // avant de l'afficher par poste il faut les trier par poste
 void trier_les_joueurs_par_poste(Equipe *eq)
@@ -337,15 +358,25 @@ void modifier_un_joueur_buts(int id, int new_buts, Equipe *eq)
 // SUPPRIMER UN JOUEUR
 
 // Supprimer un joueur par identifiant.
+
 void supprimer_joueur(Equipe *eq, int id)
 {
     int index = rechercher_joueur_index(id, eq);
-    for (int i = index; i < eq->effective - 1; i++)
-    {
+
+    if (index == -1) {
+        printf("Joueur avec ID %d introuvable.\n", id);
+        return;
+    }
+
+    // Décaler les joueurs vers la gauche
+    for (int i = index; i < eq->effective - 1; i++) {
         eq->joueur[i] = eq->joueur[i + 1];
     }
-    --eq->effective;
+
+    eq->effective--;  // réduire la taille logique
+    printf("Joueur avec ID %d supprimé avec succès.\n", id);
 }
+
 // RECHERCHER  UN JOUEUR
 void rechercher_un_joueur(int id_cher, Equipe eq)
 {
@@ -361,19 +392,21 @@ void rechercher_un_joueur(int id_cher, Equipe eq)
 
 void rechercher_un_joueur_par_nom(char nom[], Equipe eq)
 {
+    int found = 0;
     for (int i = 0; i < eq.effective; i++)
     {
-        if (strcmp(eq.joueur[i].nom, nom))
+        if (strcmp(eq.joueur[i].nom, nom) == 0)
         {
-            printf("Le joueur exist a la position %d ", i + 1);
+            printf("Le joueur existe a la position %d :\n", i + 1);
             show_player(eq.joueur[i]);
-        }
-        else
-        {
-            printf("%sLe joueur n'existe pas !!! %s", red, reset);
+            found = 1;
         }
     }
+    if (!found) {
+        printf("%sLe joueur n'existe pas !!! %s\n", red, reset);
+    }
 }
+
 
 void afficher_menu_statistiques()
 {
@@ -390,139 +423,106 @@ void afficher_menu_statistiques()
 // STATISTIQUES
 int maxAge(Equipe eq)
 {
-    int max = 0;
-    for (int i = 0; i < eq.effective; i++)
-    {
-        if (max < eq.joueur[i].age)
-            max = eq.joueur[i].age;
-    }
+    if (eq.effective == 0) return -1;
+    int max = eq.joueur[0].age;
+    for (int i = 1; i < eq.effective; i++)
+        if (eq.joueur[i].age > max) max = eq.joueur[i].age;
     return max;
 }
+
 int minAge(Equipe eq)
 {
-    int min = 0;
-    for (int i = 0; i < eq.effective; i++)
-    {
-        if (min > eq.joueur[i].age)
-            min = eq.joueur[i].age;
-    }
+    if (eq.effective == 0) return -1;
+    int min = eq.joueur[0].age;
+    for (int i = 1; i < eq.effective; i++)
+        if (eq.joueur[i].age < min) min = eq.joueur[i].age;
     return min;
 }
 
 float moyenne(Equipe eq)
 {
+    if (eq.effective == 0) return 0.0f;
     int somme = 0;
     for (int i = 0; i < eq.effective; i++)
-    {
         somme += eq.joueur[i].age;
-    }
-    return (float)somme / eq.effective;
+    return (float)somme / (float)eq.effective;
 }
-int position_max_but(Equipe eq)
-{
-    int max_id;
-    int max_but = 0;
-    int n = eq.effective;
-    for (int i = 0; i < n; i++)
-    {
-        if (max_but < eq.joueur[i].buts)
-            max_but = eq.joueur[i].buts;
-        max_id = eq.joueur[i].id;
-    }
-    return max_id;
-}
-void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
-{
-    if (eq.effective == 0)
-    {
-        printf("Y'a pas de joueurs : \n");
-    }
-    else
-    {
-        int *tabInd;
-        int count = 0;
-        tabInd = (int *)malloc(sizeof(int) * count);
-        for (int i = 0; i < eq.effective; i++)
-        {
-            if (eq.joueur[i].buts == x)
-                tabInd[count++] = i;
-        }
-        if (count == 0)
-        {
-            printf("Pas de joueurs qui ont marquer %d buts ! \n", x);
-        }
-        else
-        {
-            printf("Listes des joueurs qui ont marquer %d buts : \n",x);
-            for (int i = 0; i < count; i++)
-            {
-                show_player(eq.joueur[tabInd[i]]);
-            }
-        }
-    }
-}
-void afficher_meilleur_buteur(Equipe eq)
-{
-    int index = position_max_but(eq);
-    show_player(eq.joueur[index]);
-}
+
 int jeune_index(Equipe eq)
 {
-    int size = eq.effective;
-    int index_jeune;
+    if (eq.effective == 0) return -1;
     int minA = minAge(eq);
-    for (int i = 0; i < size; i++)
-    {
-        if (eq.joueur[i].age == minA)
-        {
-            index_jeune = i;
-        }
+    for (int i = 0; i < eq.effective; i++) {
+        if (eq.joueur[i].age == minA) return i;
     }
-    return index_jeune;
+    return -1;
 }
+
 int age_index(Equipe eq)
 {
-    int size = eq.effective;
-    int index_age;
+    if (eq.effective == 0) return -1;
     int maxA = maxAge(eq);
-    for (int i = 0; i < size; i++)
-    {
-        if (eq.joueur[i].age == maxA)
-        {
-            index_age = i;
-        }
+    for (int i = 0; i < eq.effective; i++) {
+        if (eq.joueur[i].age == maxA) return i;
     }
-    return index_age;
+    return -1;
 }
 
 void afficher_le_joueur_le_plus_jeune_et_le_plus_age(Equipe eq)
 {
     int agee = age_index(eq);
     int jeune = jeune_index(eq);
+    if (agee == -1 || jeune == -1) {
+        printf("Equipe vide.\n");
+        return;
+    }
     printf("Le joueur le plus age est : \n");
     show_player(eq.joueur[agee]);
-    printf("\n");
-    printf("Le joueur le plus Jeune est : \n");
+    printf("\nLe joueur le plus jeune est : \n");
     show_player(eq.joueur[jeune]);
 }
-/*void afficher_statistiques(Equipe eq)
+int position_max_but(Equipe eq)
 {
-    int x;
-    // Afficher le nombre total de joueurs dans l’équipe.
-    printf("le nombre total des joueurs dans l'equipe : %d", eq.effective);
-    // Afficher l’âge moyen des joueurs.
-    float moy = moyenne(eq);
-    printf("la moyenne de l'age de l'equipe est : %f \n", moy);
-    // Afficher les joueurs ayant marqué plus de X buts (X introduit par l’utilisateur).
-    printf("entrer le nombre des buts X : \n");
-    scanf("%d", &x);
-    afficher_joueurs_marque_plus_X_buts(eq, x);
-    // Afficher le meilleur buteur (joueur avec le maximum de buts).
-    afficher_meilleur_buteur(eq);
-    // Afficher le joueur le plus jeune et le plus âgé.
-    afficher_le_joueur_le_plus_jeune_et_le_plus_age(eq);
+    if (eq.effective == 0) return -1;
+    int best_idx = 0;
+    int max_but = eq.joueur[0].buts;
+    for (int i = 1; i < eq.effective; i++) {
+        if (eq.joueur[i].buts > max_but) {
+            max_but = eq.joueur[i].buts;
+            best_idx = i;
+        }
+    }
+    return best_idx;
 }
-*/
+
+   void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
+{
+    int found = 0;
+
+    for (int i = 0; i < eq.effective; i++) {
+        if (eq.joueur[i].buts > x) { 
+            if (!found) {
+                printf("Liste des joueurs ayant marqué plus de %d buts :\n", x);
+            }
+            show_player(eq.joueur[i]);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("Aucun joueur n'a marqué plus de %d buts.\n", x);
+    }
+}
+
+void afficher_meilleur_buteur(Equipe eq)
+{
+    int index = position_max_but(eq);
+    if (index == -1) {
+        printf("Aucun joueur dans l'equipe.\n");
+        return;
+    }
+    show_player(eq.joueur[index]);
+}
 int main_1()
 {
 
