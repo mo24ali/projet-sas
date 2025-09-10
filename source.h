@@ -81,7 +81,8 @@ Joueur init_joueur(int i
 }
 //  afficher joueur test
     void show_player(Joueur j){
-        printf("Le joueur : %s %s , poste : %s , num_maillot : %s , statut : %s , age : %d , numero de buts : %d , ")
+        printf("Le joueur : %s %s , poste : %s , num_maillot : %s , statut : %s , age : %d , numero de buts : %d , Date d'inscription : ",j.prenom,j.nom,j.poste,j.num_maillot, j.statut, j.age, j.buts);
+        afficher_date(j.dateInscription);
     }
 
 Equipe init_equipe(int eff)
@@ -131,7 +132,7 @@ void ajouter_un_nouveau_joueur(Equipe eq, Joueur j)
     //Afficher le meilleur buteur (joueur avec le maximum de buts).
     //Afficher le joueur le plus jeune et le plus âgé.
 
-int main()
+int main_1()
 {
 
     return 0;
