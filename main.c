@@ -146,7 +146,7 @@ void case6(Equipe equipe)
         printf("%s choix invalide !! %s\n", red, reset);
     }
 }
-int main()
+int main_1()
 {
     Equipe equipe = init_equipe(10);
     Joueur joueurs[10] = {
@@ -192,63 +192,21 @@ int main()
         switch (choix)
         {
         case 1:
-
             case1(equipe);
-            /**Ajouter un joueur : */
-            /**
-             * Ajouter un nouveau joueur.
-                Ajouter plusieurs joueurs en une seule opération.
-             */
-
             break;
         case 2:
-            /**
-             * Afficher la liste de tous les joueurs :
-                Trier les joueurs par ordre alphabétique (Nom).
-                Trier les joueurs par âge.
-                Afficher les joueurs par poste.
-
-             */
             case2(equipe);
             break;
         case 3:
-            /**
-            Modifier un joueur :
-            Modifier le poste d’un joueur.
-            Modifier l’âge d’un joueur.
-            Modifier le nombre de buts marqués par un joueur.
-             */
             case3(equipe);
             break;
         case 4:
-            /**
-             * Supprimer un joueur :
-            Supprimer un joueur par identifiant.
-             */
-
             case4(equipe);
             break;
         case 5:
-            /**
-             * Rechercher un joueur :
-            Rechercher un joueur par Identifiant.
-            Rechercher un joueur par Nom.
-
-             */
             case5(equipe);
             break;
         case 6:
-            /**
-             * Statistiques :
-                Afficher le nombre total de joueurs dans l’équipe.
-                Afficher l’âge moyen des joueurs.
-                Afficher les joueurs ayant marqué plus de X buts (X introduit par l’utilisateur).
-                Afficher le meilleur buteur (joueur avec le maximum de buts).
-                Afficher le joueur le plus jeune et le plus âgé.
-
-
-
-             */
             case6(equipe);
             break;
         case 7:
@@ -259,5 +217,9 @@ int main()
             break;
         }
     } while (choix >= 1 || choix <= 6);
+    return 0;
+}
+int main(){
+
     return 0;
 }
