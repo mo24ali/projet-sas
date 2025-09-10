@@ -453,7 +453,7 @@ void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
         }
         else
         {
-            printf("Listes des joueurs qui ont marquer %d buts : \n");
+            printf("Listes des joueurs qui ont marquer %d buts : \n",x);
             for (int i = 0; i < count; i++)
             {
                 show_player(eq.joueur[tabInd[i]]);
