@@ -198,7 +198,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 // AFFICHER JOUEUR
 void show_player(Joueur j)
 {
-    printf(" => Le joueur : %s %s \n => poste : %s \n => num_maillot : %d \n => statut : %s \n => age : %d \n => numero de buts : %d \n => Date d'inscription : ", j.prenom, j.nom, j.poste, j.num_maillot, j.statut, j.age, j.buts);
+    printf(" => Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ", j.prenom, j.nom, j.id,j.poste, j.num_maillot, j.statut, j.age, j.buts);
     afficher_date(j.dateInscription);
     printf("\n");
 }
@@ -256,7 +256,7 @@ void afficher_equipe(Equipe eq)
 {
     for (int i = 0; i < eq.effective; i++)
     {
-        printf("%s : ", eq.joueur[i].poste);
+        printf("%s : \n", eq.joueur[i].poste);
         show_player(eq.joueur[i]);
     }
 }
