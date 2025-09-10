@@ -3,7 +3,7 @@
 #include <string.h>
 #include "source.h"
 
-// ====== Fonctions case ======
+
 void case1(Equipe *equipe)
 {
     int ajout;

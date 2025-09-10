@@ -308,6 +308,7 @@ void ajouter_multiple_joueur(Equipe *eq)
     int nb;
     printf("combien de joueur vous voulez : \n");
     scanf("%d", &nb);
+    getchar();
     for (int i = 0; i < nb; i++)
     {
         printf("*********** Inserver joueur %d ********* \n", i + 1);
