@@ -115,7 +115,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     int choix_pos;
     int j_insc, m_insc, a_insc;
 
-    //getchar();
+    getchar();
 
     printf("entrez le nom : \n");
     fgets(nom, sizeof(nom), stdin);
@@ -123,7 +123,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
     printf("entrez le prenom : \n");
     fgets(prenom, sizeof(prenom), stdin);
-    // getchar();
+    getchar();
 
     printf("entrez le numero de maillot\n");
     scanf("%d", &maillot);
@@ -134,7 +134,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     // getchar();
 
     age = calculer_age(annee_de_naissance);
-    printf("entrez le numero des buts");
+    printf("entrez le numero des buts \n");
     scanf("%d", &num_buts);
     // getchar();
 
@@ -148,7 +148,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
     printf("Entrez l'annee d'inscription : \n");
     scanf("%d", &a_insc);
-    // getchar();
+    getchar();
 
     Date dt = init_date_1(j_insc, m_insc, a_insc);
     printf("Le joueur est titulaire ou remplacant ? \n");
