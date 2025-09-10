@@ -146,7 +146,7 @@ void case6(Equipe equipe)
         printf("%s choix invalide !! %s\n", red, reset);
     }
 }
-int main_1()
+int main()
 {
     Equipe equipe = init_equipe(10);
     Joueur joueurs[10] = {
@@ -192,9 +192,16 @@ int main_1()
         switch (choix)
         {
         case 1:
+         /**
+         * not fully functional 
+         */
             case1(equipe);
             break;
         case 2:
+        /**$
+         * afficher par ordre 
+         * not fully functional
+         */
             case2(equipe);
             break;
         case 3:
@@ -207,6 +214,9 @@ int main_1()
             case5(equipe);
             break;
         case 6:
+        /**
+         * not fully functional 
+         */
             case6(equipe);
             break;
         case 7:
@@ -217,9 +227,5 @@ int main_1()
             break;
         }
     } while (choix >= 1 || choix <= 6);
-    return 0;
-}
-int main(){
-
     return 0;
 }
