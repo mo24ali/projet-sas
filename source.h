@@ -53,8 +53,20 @@ Date init_date_1(int j, int m, int a)
     new_date.a = a;
     return new_date;
 }
+//affiche date
+void afficher_date(Date dt){
+    printf("%d / %d / %d ",dt.j,dt.m,dt.a);
+}
 
-Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag, int bt, Date dt, char st[])
+Joueur init_joueur(int i
+    , char nm[]
+    , char pnm[]
+    , int maillot
+    , char pos[]
+    , int ag
+    , int bt
+    , Date dt
+    , char st[])
 {
     Joueur j;
     j.id = i;
@@ -67,6 +79,10 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
     j.buts = bt;
     j.dateInscription = init_date_1(dt.j, dt.m, dt.a);
 }
+//  afficher joueur test
+    void show_player(Joueur j){
+        printf("Le joueur : %s %s , poste : %s , num_maillot : %s , statut : %s , age : %d , numero de buts : %d , ")
+    }
 
 Equipe init_equipe(int eff)
 {
@@ -86,10 +102,11 @@ void ajouter_un_nouveau_joueur(Equipe eq, Joueur j)
     }
     else
     {
-        for (int i = 0; i < eq.effective; i++)
-        {
-            
-        }
+        int i;
+        for (i = 0; i < eq.effective; i++);
+        eq.effective = i;
+        eq.joueur[eq.effective] = j;
+        
     }
 }
 // AFFICHER JOUEUR
