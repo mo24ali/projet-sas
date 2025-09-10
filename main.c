@@ -174,15 +174,30 @@ void case6(Equipe *equipe)
 }
 void clear_screen() {
     #ifdef _WIN32
-        system("cls");    // Windows
+        system("cls"); 
     #else
-        system("clear");  // Linux / macOS
+        system("clear");
     #endif
 }
 // ====== MAIN ======
 int main()
 {
+    // Initialiser l'équipe avec capacité de 10 joueurs
     Equipe equipe = init_equipe(10);
+
+    // Créer quelques joueurs initiaux
+    Joueur joueurs_init[5] = {
+        init_joueur(1, "Dupont", "Jean", 7, "attaquant", 25, 10, init_date_1(10,9,2023), "titulaire"),
+        init_joueur(2, "Martin", "Paul", 4, "milieu", 22, 5, init_date_1(5,7,2022), "remplacant"),
+        init_joueur(3, "Bernard", "Luc", 1, "gardien", 28, 8, init_date_1(12,8,2021), "titulaire"),
+        init_joueur(4, "Petit", "Marc", 3, "defenseur", 24, 12, init_date_1(3,4,2020), "titulaire"),
+        init_joueur(5, "Robert", "Louis", 9, "attaquant", 30, 15, init_date_1(15,6,2023), "remplacant")
+    };
+
+    // Ajouter ces joueurs à l'équipe
+    for(int i = 0; i < 5; i++){
+        equipe.joueur[equipe.effective++] = joueurs_init[i];
+    }
 
     int choix;
     do
