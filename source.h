@@ -84,8 +84,8 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
 Equipe init_equipe(int eff)
 {
     Equipe e;
-    e.effective = 0;
-    e.capacite = 0;
+    e.effective = eff;
+    e.capacite = eff;
     e.joueur = (Joueur *)malloc(sizeof(Joueur) * e.capacite);
     return e;
 }

@@ -148,7 +148,22 @@ void case6(Equipe equipe)
 }
 int main()
 {
-    Equipe equipe = init_equipe(0);
+    Equipe equipe = init_equipe(10);
+    Joueur joueurs[10] = {
+        {1, 25, 10, 7, {10, 9, 2023}, "Dupont", "Jean", "attaquant", "titulaire"},
+        {2, 22, 5, 4, {5, 7, 2022}, "Martin", "Paul", "milieu", "remplacant"},
+        {3, 28, 8, 1, {12, 8, 2021}, "Bernard", "Luc", "gardien", "titulaire"},
+        {4, 24, 12, 3, {3, 4, 2020}, "Petit", "Marc", "defenseur", "titulaire"},
+        {5, 30, 15, 9, {15, 6, 2023}, "Robert", "Louis", "attaquant", "remplacant"},
+        {6, 27, 7, 5, {21, 5, 2022}, "Richard", "Alain", "milieu", "titulaire"},
+        {7, 23, 4, 8, {30, 11, 2021}, "Durand", "Michel", "defenseur", "remplacant"},
+        {8, 26, 3, 10, {1, 1, 2020}, "Leroy", "Henri", "attaquant", "titulaire"},
+        {9, 21, 6, 2, {9, 3, 2023}, "Moreau", "Jacques", "gardien", "remplacant"},
+        {10, 29, 9, 6, {25, 12, 2022}, "Simon", "Alain", "milieu", "titulaire"}
+    };
+    for(int i = 0 ; i < 10 ; i++){
+        equipe.joueur[i] = joueurs[i];
+    }
     int choix;
 
     do
