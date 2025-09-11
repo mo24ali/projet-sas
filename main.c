@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "source.h"
-
+#include "animation.h"
 
 void case1(Equipe *equipe)
 {
@@ -25,7 +25,8 @@ void case1(Equipe *equipe)
 }
 
 void case2(Equipe *equipe)
-{
+{   
+
     int affichage;
     printf("1. afficher les joueurs par ordre simple \n");
     printf("2. afficher les joueurs par ordre alphabetique \n");
@@ -181,7 +182,7 @@ void clear_screen() {
 }
 // ====== MAIN ======
 int main()
-{
+{   full_run(5);
     // Initialiser l'équipe avec capacité de 10 joueurs
     Equipe equipe = init_equipe(10);
 
