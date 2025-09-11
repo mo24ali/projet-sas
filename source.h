@@ -167,7 +167,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     char pos[MAX_CHAR];
     char status[MAX_CHAR];
     char postes[4][MAX_CHAR] = {"gardien", "defenseur", "milieu", "attaquant"};
-    char statut[2][MAX_CHAR] = {"titulaire","remplacant"};
+    char statut[2][MAX_CHAR] = {"TITULAIRE","REMPLACANT"};
     int maillot;
     int annee_de_naissance;
     int age;
@@ -183,15 +183,11 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     char tmp[64];
 
     /**
-     * 
      * lire chaine affiche le message de demande de input
      * prend comme argument le message, le buffer pour lire l'input et size de input
      * size est donné par sizeof lors de l'execution
      * 
      * lire par fgets et traite la situation de blocage de buffer par le retour a la ligne
-     * 
-     * 
-     * 
      */
     lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &maillot) != 1)
@@ -231,6 +227,8 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         case 2:
             strcpy(status,statut[1]);
             break;
+        default:
+            strcpy(status,statut[1]);
     }
 
     // Choix poste
