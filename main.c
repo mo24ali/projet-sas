@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "source.h"
-#include "animation.h"
-
+//#include "animation.h"
+#include "animation_windows.h"
 void case1(Equipe *equipe)
 {
     int ajout;
@@ -20,7 +20,7 @@ void case1(Equipe *equipe)
         ajouter_multiple_joueur(equipe);
         break;
     default:
-        printf("%sChoix invalide !%s\n", red, reset);
+        printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
 
@@ -47,7 +47,7 @@ void case2(Equipe *equipe)
         afficher_equipe(*equipe);
         break;
     default:
-        printf("%sChoix invalide !%s\n", red, reset);
+        printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
 
@@ -96,7 +96,7 @@ void case3(Equipe *equipe)
         break;
     }
     default:
-        printf("%sChoix invalide !%s\n", red, reset);
+        printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
 
@@ -136,7 +136,7 @@ void case5(Equipe *equipe)
         break;
     }
     default:
-        printf("%sChoix invalide !%s\n", red, reset);
+        printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
 
@@ -170,7 +170,7 @@ void case6(Equipe *equipe)
         afficher_le_joueur_le_plus_jeune_et_le_plus_age(*equipe);
         break;
     default:
-        printf("%sChoix invalide !%s\n", red, reset);
+        printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
 void clear_screen() {
@@ -182,7 +182,7 @@ void clear_screen() {
 }
 // ====== MAIN ======
 int main()
-{   full_run(5);
+{    full_run(5);
     system("clear");
     // Initialiser l'équipe avec capacité de 10 joueurs
     Equipe equipe = init_equipe(10);
@@ -204,17 +204,17 @@ int main()
     int choix;
     do
     {
-        printf("\t%s************** MENU *****************%s\n", cyan, reset);
-        printf("\t%s*       1 .  Ajouter Joueur         *%s\n", blue, reset);
-        printf("\t%s*       2 .  Afficher Joueur        *%s\n", yellow, reset);
-        printf("\t%s*       3 .  Modifier Joueur        *%s\n", blue, reset);
-        printf("\t%s*       4 .  Supprimer Joueur       *%s\n", yellow, reset);
-        printf("\t%s*       5 .  Rechercher Joueur      *%s\n", blue, reset);
-        printf("\t%s*       6 .  Statistiques           *%s\n", yellow, reset);
-        printf("\t%s*       7 .  Quitter                *%s\n", blue, reset);
-        printf("\t%s*       8 .  Vider le terminal      *%s\n", yellow, reset);
-        printf("\t%s*       Choisir une option :        *%s\n", cyan, reset);
-        printf("\t%s*************************************%s\n", cyan, reset);
+        printf("\t%s************** MENU *****************%s\n", cyan, ANSI_RESET);
+        printf("\t%s*       1 .  Ajouter Joueur         *%s\n", blue, ANSI_RESET);
+        printf("\t%s*       2 .  Afficher Joueur        *%s\n", yellow, ANSI_RESET);
+        printf("\t%s*       3 .  Modifier Joueur        *%s\n", blue, ANSI_RESET);
+        printf("\t%s*       4 .  Supprimer Joueur       *%s\n", yellow, ANSI_RESET);
+        printf("\t%s*       5 .  Rechercher Joueur      *%s\n", blue, ANSI_RESET);
+        printf("\t%s*       6 .  Statistiques           *%s\n", yellow, ANSI_RESET);
+        printf("\t%s*       7 .  Quitter                *%s\n", blue, ANSI_RESET);
+        printf("\t%s*       8 .  Vider le terminal      *%s\n", yellow, ANSI_RESET);
+        printf("\t%s*       Choisir une option :        *%s\n", cyan, ANSI_RESET);
+        printf("\t%s*************************************%s\n", cyan, ANSI_RESET);
 
         scanf("%d", &choix);
         getchar();
@@ -246,7 +246,7 @@ int main()
             clear_screen();
             break;
         default:
-            printf("%sChoix invalide !!!!%s\n", red, reset);
+            printf("%sChoix invalide !!!!%s\n", red, ANSI_RESET);
         }
         
     } while (1);

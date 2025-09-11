@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define reset "\033[0m"
+#define ANSI_RESET "\033[0m"
 #define black "\033[0;30m"
 #define red "\033[0;31m"
 #define green "\033[0;32m"
@@ -96,13 +96,7 @@ Equipe init_equipe(int capacite)
 }
 
 // genere id
-/*
-int genere_id()
-{
-    static int tmp = 1;
-    return tmp++;
-}
-    */
+
 int genere_id(Equipe *eq)
 {
     int max_id = 0;
@@ -243,7 +237,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 // AFFICHER JOUEUR
 void show_player(Joueur j)
 {
-    printf(" => Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ",
+    printf(" Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ",
            j.prenom[0] ? j.prenom : "(nil)",
            j.nom[0] ? j.nom : "(nil)",
            j.id,
@@ -314,8 +308,8 @@ void afficher_equipe(Equipe eq)
         return;
     }
 
-    printf("\n=================== LISTE DES JOUEURS ===================\n");
-    printf("%-4s | %-12s | %-12s | %-8s | %-6s | %-9s | %-3s | %-4s | %-12s\n",
+    printf("\n========================================================= LISTE DES JOUEURS =========================================================\n");
+    printf("%-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s\n",
            "ID", "Nom", "Prenom", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
     printf("---------------------------------------------------------------------------------------------\n");
 
@@ -324,7 +318,7 @@ void afficher_equipe(Equipe eq)
         show_player(eq.joueur[i]);
     }
 
-    printf("==========================================================\n\n");
+    printf("======================================================================================================================================\n\n");
 }
 
 // Afficher les joueurs par poste.
@@ -372,7 +366,7 @@ void modifier_un_joueur_poste(int id, char new_pos[], Equipe *eq)
     }
     else
     {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, reset);
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
     }
 }
 
@@ -386,7 +380,7 @@ void modifier_un_joueur_age(int id, int new_age, Equipe *eq)
     }
     else
     {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, reset);
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
     }
 }
 // Modifier le nombre de buts marqués par un joueur.
@@ -399,7 +393,7 @@ void modifier_un_joueur_buts(int id, int new_buts, Equipe *eq)
     }
     else
     {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, reset);
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
     }
 }
 // SUPPRIMER UN JOUEUR
@@ -453,7 +447,7 @@ void rechercher_un_joueur_par_nom(char nom[], Equipe eq)
     }
     if (!found)
     {
-        printf("%sLe joueur n'existe pas !!! %s\n", red, reset);
+        printf("%sLe joueur n'existe pas !!! %s\n", red, ANSI_RESET);
     }
 }
 
@@ -591,9 +585,4 @@ void afficher_meilleur_buteur(Equipe eq)
         return;
     }
     show_player(eq.joueur[index]);
-}
-int main_1()
-{
-
-    return 0;
 }
