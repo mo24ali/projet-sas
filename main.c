@@ -306,7 +306,7 @@ int main()
             break;
         case 8:
             printf("\t");
-            printf("Au revoir !\n");
+            showGoodbyeMessage();
             Sleep(1000);
             system("cls");
             exit(0);

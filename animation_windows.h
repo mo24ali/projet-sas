@@ -290,7 +290,8 @@ void showWelcomeMessage() {
         "    \\_/\\_/ \\___|_|\\___\\___/|_| |_| |_|\\___|  \\__\\___/ ",
         "",
         "                WELCOME TO THE APP                      \n"
-        "                   FOOTBALL CLUB MANAGER                      "
+        "       FOOTBALL CLUB MANAGER code by Ali Cherraoui \n                   "
+        "      SAS 2025                   "
     };
 
     int lines = sizeof(welcome) / sizeof(welcome[0]);
@@ -299,6 +300,31 @@ void showWelcomeMessage() {
     
     for (int i = 0; i < lines; i++) {
         printf("   %s\n", welcome[i]);
+        Sleep(150);  // small delay between lines for fade-in effect
+    }
+
+    printf("%s",ANSI_RESET); // Reset formatting
+}
+void showGoodbyeMessage() {
+    const char *goodbye[] = {
+    "         _____                  _      ",
+    "     /\\          |  __ \\               (_)     ",
+    "    /  \\  _   _  | |__) |_____   _____  _ _ __ ",
+    "   / /\\ \\| | | | |  _  // _ \\ \\ / / _ \\| | '__|",
+    "  / ____ \\ |_| | | | \\ \\  __/\\ V / (_) | | |   ",
+    " /_/    \\_\\__,_| |_|  \\_\\___| \\_/ \\___/|_|_|   ",
+    "                                               ",
+    "                                               "
+};
+
+
+
+    int lines = sizeof(goodbye) / sizeof(goodbye[0]);
+
+    printf("\033[1m"); // Enable bold
+    
+    for (int i = 0; i < lines; i++) {
+        printf("   %s\n", goodbye[i]);
         Sleep(150);  // small delay between lines for fade-in effect
     }
 
@@ -332,7 +358,7 @@ void full_run(int duration_seconds) {
     clearScreen();   
     showWelcomeMessage();
 
-    Sleep(2000);      
+    Sleep(4000);      
     clearScreen();    
 
     printf("\e[?25h"); 
