@@ -163,7 +163,7 @@ void drawBall(struct vec2 center, double radius, struct winsize *w)
         printf("\n");
     }
 }
-// ترسم كرة القدم (ASCII)
+
 void drawSoccerBall(struct cube *ball, struct winsize *w) {
     int cols = w->ws_col;
     int rows = w->ws_row;
