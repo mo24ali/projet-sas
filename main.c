@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "source.h"
-// #include "animation.h"
-#include "animation_windows.h"
+//#include "animation_windows.h"
 void case1(Equipe *equipe)
 {
     int ajout;
@@ -30,7 +29,6 @@ void case1(Equipe *equipe)
         printf("%sChoix invalide !%s\n", red, ANSI_RESET);
     }
 }
-
 void case2(Equipe *equipe)
 {
 
@@ -157,6 +155,12 @@ void case5(Equipe *equipe)
     printf("1. rechercher un joueur par ID : \n");
     printf("\t");
     printf("2. rechercher un joueur par NOM : \n");
+    printf("\t");
+    printf("3. rechercher un joueur par AGE : \n");
+    printf("\t");
+    printf("4. rechercher un joueur par TRANCHE D'AGE : \n");
+    printf("\t");
+    printf("5. rechercher un joueur par POSTE : \n");
     scanf("%d", &choix5);
     getchar();
 
@@ -179,6 +183,26 @@ void case5(Equipe *equipe)
         fgets(nm, sizeof(nm), stdin);
         nm[strcspn(nm, "\n")] = 0;
         rechercher_un_joueur_par_nom(nm, *equipe);
+        break;
+    }
+    case 3:
+    {
+        int age;
+        printf("entrez l'age");
+        scanf("%d",&age);
+        rechercher_joueurs_par_age(equipe,age);
+        break;
+    }
+    case 4:
+    {
+        rechercher_joueurs_par_tranche_d_age(equipe);
+        break;
+    }
+    case 5:
+    {
+        char tmp[MAX_CHAR];
+        lire_chaine("entrez le poste que vous chercher : \n",tmp,sizeof(tmp));
+        rechercher_joueurs_par_poste(equipe,tmp);
         break;
     }
     default:
@@ -235,6 +259,7 @@ void clear_screen()
 
 int main()
 {   //full_run(5);
+    //main_animation(5);
     system("clear");
     
     Equipe equipe = init_equipe(10);
@@ -313,9 +338,11 @@ int main()
             break;
         case 8:
             printf("\t");
-            showGoodbyeMessage();
-            Sleep(1000);
-            system("cls");
+            //showGoodbyeMessage();
+            //Sleep(1000);
+            //sleep(1000);
+            //system("cls");
+            system("clear");
             exit(0);
         default:
             printf("\t");

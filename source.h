@@ -81,38 +81,7 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
     return j;
 }
 
-// read from the file 
-/*
-void charger_joueurs(char *nomFichier, Joueur tab[], int tailleMax) {
-    FILE *f = fopen(nomFichier, "r");
-    if (!f) {
-        perror("Erreur ouverture fichier");
-        return -1;
-    }
 
-    int n = 0;
-    while (n < tailleMax &&
-           fscanf(f, "%d, \"%29[^\"]\", \"%29[^\"]\", %d, \"%19[^\"]\", %d, %d, %d, %d, %d, \"%19[^\"]\"\n",
-                  &tab[n].id,
-                  tab[n].nom,
-                  tab[n].prenom,
-                  &tab[n].numero,
-                  tab[n].poste,
-                  &tab[n].age,
-                  &tab[n].buts,
-                  &tab[n].date.jour,
-                  &tab[n].date.mois,
-                  &tab[n].date.annee,
-                  tab[n].statut) == 11)
-    {
-        n++;
-    }
-
-    fclose(f);
- //   return n;   // number of players loaded
-}
-
-*/
 
 Equipe init_equipe(int capacite)
 {
@@ -128,6 +97,23 @@ Equipe init_equipe(int capacite)
     return e;
 }
 
+//utilité
+int position_max_but(Equipe eq)
+{
+    if (eq.effective == 0)
+        return -1;
+    int best_idx = 0;
+    int max_but = eq.joueur[0].buts;
+    for (int i = 1; i < eq.effective; i++)
+    {
+        if (eq.joueur[i].buts > max_but)
+        {
+            max_but = eq.joueur[i].buts;
+            best_idx = i;
+        }
+    }
+    return best_idx;
+}
 // genere id
 
 int genere_id(Equipe *eq)
@@ -248,7 +234,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     }
 
     // Choix poste
-    lire_chaine("1) gardien.  \n 2) defenseur.  \n 3) milieu.  \n 4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
+    lire_chaine("\t \n 1) gardien.  \n 2) defenseur.  \n 3) milieu.  \n 4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_pos) != 1)
         choix_pos = 4;
     switch (choix_pos)
@@ -294,8 +280,13 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
 // AFFICHER JOUEUR
 void show_player(Joueur j)
-{       
-    printf(" %-4s | %-12s | id : %d  | poste : %-12s | num_maillot : %-6d | statut : %-6s | age : %d  | numero de buts : %-12d | Date d'inscription : ",
+{
+    printf("+-----------------------------------------------------------------------------------------+\n");
+    printf("| %-12s | %-12s | %-3s | %-12s | %-6s | %-8s | %-3s | %-5s | %-15s |\n",
+           "Prenom", "Nom", "ID", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
+    printf("+-----------------------------------------------------------------------------------------+\n");
+
+    printf("| %-12s | %-12s | %-3d | %-12s | %-6d | %-8s | %-3d | %-5d | %02d/%02d/%04d       |\n",
            j.prenom[0] ? j.prenom : "NULL",
            j.nom[0] ? j.nom : "NULL",
            j.id,
@@ -303,10 +294,14 @@ void show_player(Joueur j)
            j.num_maillot,
            j.statut[0] ? j.statut : "NULL",
            j.age,
-           j.buts);
-    afficher_date(j.dateInscription);
-    printf("\n");
+           j.buts,
+           j.dateInscription.j,
+           j.dateInscription.m,
+           j.dateInscription.a);
+
+    printf("+-----------------------------------------------------------------------------------------+\n");
 }
+
 void show_player_2(Joueur j)
 {       
     printf("%-12s | %-12s | %-3d | %-12s | %-7d | %-8s | %-3d | %-5d | ",
@@ -319,6 +314,13 @@ void show_player_2(Joueur j)
            j.age,
            j.buts);
     afficher_date(j.dateInscription);
+    printf("\n");
+}
+//bonus
+void star_de_lequipe(Equipe eq){
+    int i = position_max_but(eq);
+    printf("le STAR DE L'EQUIPE EST : \n");
+    show_player(eq.joueur[i]);
     printf("\n");
 }
 // Trier les joueurs par ordre alphabétique (Nom).
@@ -342,6 +344,89 @@ void trier_les_joueurs_alphabetiquement(Equipe *eq)
         }
     }
 }
+//rechercher Joueurs (bonus)
+void rechercher_joueurs_par_poste(Equipe *eq, const char poste[]) {
+    if (eq->effective == 0) {
+        printf("Aucun joueur dans l'equipe.\n");
+        return;
+    }
+
+    int found = 0;
+    printf("Liste des joueurs au poste '%s' :\n", poste);
+    for (int i = 0; i < eq->effective; i++) {
+        if (strcasecmp(eq->joueur[i].poste, poste) == 0) {
+            show_player(eq->joueur[i]);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("Aucun joueur trouvé pour le poste '%s'.\n", poste);
+    }
+}
+
+void rechercher_joueurs_par_age(Equipe *eq, int age) {
+    if (eq->effective == 0) {
+        printf("Aucun joueur dans l'equipe.\n");
+        return;
+    }
+
+    int found = 0;
+    printf("Liste des joueurs ayant l'age %d :\n", age);
+    for (int i = 0; i < eq->effective; i++) {
+        if (eq->joueur[i].age == age) {
+            show_player(eq->joueur[i]);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("Aucun joueur trouvé avec l'age %d.\n", age);
+    }
+}
+
+void rechercher_joueurs_par_tranche_d_age(Equipe *eq) {
+    if (eq->effective == 0) {
+        printf("Aucun joueur dans l'equipe.\n");
+        return;
+    }
+
+    int minAge = 0, maxAge = 0;
+    char buffer[32];
+
+    printf("Entrez le minimum d'age : ");
+    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &minAge) != 1) {
+        printf("Entrée invalide. Valeur par défaut 0 utilisée.\n");
+        minAge = 0;
+    }
+
+    printf("Entrez le maximum d'age : ");
+    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &maxAge) != 1) {
+        printf("Entrée invalide. Valeur par défaut 100 utilisée.\n");
+        maxAge = 100;
+    }
+
+    if (minAge > maxAge) {
+        printf("Le minimum d'age est supérieur au maximum. Inversion automatique.\n");
+        int tmp = minAge;
+        minAge = maxAge;
+        maxAge = tmp;
+    }
+
+    int found = 0;
+    printf("Liste des joueurs ayant l'age entre %d et %d :\n", minAge, maxAge);
+    for (int i = 0; i < eq->effective; i++) {
+        if (eq->joueur[i].age >= minAge && eq->joueur[i].age <= maxAge) {
+            show_player(eq->joueur[i]);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("Aucun joueur trouvé dans cette tranche d'age.\n");
+    }
+}
+
 // rechercher joueur par index
 int rechercher_joueur_index(int id_cher, Equipe *eq)
 {
@@ -378,7 +463,7 @@ void afficher_equipe(Equipe eq)
         printf("Aucun joueur dans l'equipe.\n");
         return;
     }
-
+    star_de_lequipe(eq);
     printf("\n======================================= LISTE DES JOUEURS =======================================\n");
     printf("%-12s | %-12s | %-3s | %-12s | %-7s | %-8s | %-3s | %-5s | %-12s\n",
            "Prenom", "Nom", "ID", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
@@ -627,22 +712,7 @@ void afficher_le_joueur_le_plus_jeune_et_le_plus_age(Equipe eq)
     printf("\nLe joueur le plus jeune est : \n");
     show_player(eq.joueur[jeune]);
 }
-int position_max_but(Equipe eq)
-{
-    if (eq.effective == 0)
-        return -1;
-    int best_idx = 0;
-    int max_but = eq.joueur[0].buts;
-    for (int i = 1; i < eq.effective; i++)
-    {
-        if (eq.joueur[i].buts > max_but)
-        {
-            max_but = eq.joueur[i].buts;
-            best_idx = i;
-        }
-    }
-    return best_idx;
-}
+
 
 void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
 {
