@@ -81,6 +81,39 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
     return j;
 }
 
+// read from the file 
+/*
+void charger_joueurs(char *nomFichier, Joueur tab[], int tailleMax) {
+    FILE *f = fopen(nomFichier, "r");
+    if (!f) {
+        perror("Erreur ouverture fichier");
+        return -1;
+    }
+
+    int n = 0;
+    while (n < tailleMax &&
+           fscanf(f, "%d, \"%29[^\"]\", \"%29[^\"]\", %d, \"%19[^\"]\", %d, %d, %d, %d, %d, \"%19[^\"]\"\n",
+                  &tab[n].id,
+                  tab[n].nom,
+                  tab[n].prenom,
+                  &tab[n].numero,
+                  tab[n].poste,
+                  &tab[n].age,
+                  &tab[n].buts,
+                  &tab[n].date.jour,
+                  &tab[n].date.mois,
+                  &tab[n].date.annee,
+                  tab[n].statut) == 11)
+    {
+        n++;
+    }
+
+    fclose(f);
+ //   return n;   // number of players loaded
+}
+
+*/
+
 Equipe init_equipe(int capacite)
 {
     Equipe e;
@@ -109,13 +142,13 @@ int genere_id(Equipe *eq)
         }
     }
 
-    return max_id + 1; // retourne un ID unique
+    return max_id + 1; 
 }
 
 // supprime le '\n' final s'il existe
 void trim_newline(char *s)
 {
-    size_t len = strlen(s);
+    int len = strlen(s);
     if (len == 0)
         return;
     if (s[len - 1] == '\n')
@@ -123,17 +156,17 @@ void trim_newline(char *s)
 }
 
 // lecture sûre d'une ligne (fgets + trim)
-void lire_chaine(const char *invite, char *buf, size_t size)
+void lire_chaine(char *message, char *buffer, int size)
 {
-    if (invite)
-        printf("%s", invite);
-    if (fgets(buf, (int)size, stdin) == NULL)
+    if (message)
+        printf("%s", message);
+    if (fgets(buffer, size, stdin) == NULL)
     {
-        buf[0] = '\0';
+        buffer[0] = '\0';
     }
     else
     {
-        trim_newline(buf);
+        trim_newline(buffer);
     }
 }
 
@@ -148,11 +181,13 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     char pos[MAX_CHAR];
     char status[MAX_CHAR];
     char postes[4][MAX_CHAR] = {"gardien", "defenseur", "milieu", "attaquant"};
+    char statut[2][MAX_CHAR] = {"titulaire","remplacant"};
     int maillot;
     int annee_de_naissance;
     int age;
     int num_buts;
     int choix_pos;
+    int choix_status;
     int j_insc, m_insc, a_insc;
 
     lire_chaine("Entrez le nom :\n", nom, sizeof(nom));
@@ -161,6 +196,17 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     // lire entiers - on utilise fgets + sscanf pour éviter les restes dans stdin
     char tmp[64];
 
+    /**
+     * 
+     * lire chaine affiche le message de demande de input
+     * prend comme argument le message, le buffer pour lire l'input et size de input
+     * size est donné par sizeof lors de l'execution
+     * 
+     * lire par fgets et traite la situation de blocage de buffer par le retour a la ligne
+     * 
+     * 
+     * 
+     */
     lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &maillot) != 1)
         maillot = 0;
@@ -189,10 +235,20 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
     Date dt = init_date_1(j_insc, m_insc, a_insc);
 
-    lire_chaine("Le joueur est titulaire ou remplacant ?\n", status, sizeof(status));
+    lire_chaine("Le joueur est: \n \t 1. titulaire \n \t 2. remplacant \n", status, sizeof(status));
+    if(sscanf(tmp,"%d",&choix_status) != 1)
+        choix_status = 2;
+    switch(choix_status){
+        case 1:
+            strcpy(status,statut[0]);
+            break;
+        case 2:
+            strcpy(status,statut[1]);
+            break;
+    }
 
     // Choix poste
-    lire_chaine("1) gardien  2) defenseur  3) milieu  4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
+    lire_chaine("1) gardien.  \n 2) defenseur.  \n 3) milieu.  \n 4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_pos) != 1)
         choix_pos = 4;
     switch (choix_pos)
@@ -238,20 +294,33 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
 // AFFICHER JOUEUR
 void show_player(Joueur j)
-{
-    printf(" Le joueur : %s %s | id : %d  | poste : %s | num_maillot : %d | statut : %s | age : %d  | numero de buts : %d | Date d'inscription : ",
-           j.prenom[0] ? j.prenom : "(nil)",
-           j.nom[0] ? j.nom : "(nil)",
+{       
+    printf(" %-4s | %-12s | id : %d  | poste : %-12s | num_maillot : %-6d | statut : %-6s | age : %d  | numero de buts : %-12d | Date d'inscription : ",
+           j.prenom[0] ? j.prenom : "NULL",
+           j.nom[0] ? j.nom : "NULL",
            j.id,
-           j.poste[0] ? j.poste : "(nil)",
+           j.poste[0] ? j.poste : "NULL",
            j.num_maillot,
-           j.statut[0] ? j.statut : "(nil)",
+           j.statut[0] ? j.statut : "NULL",
            j.age,
            j.buts);
     afficher_date(j.dateInscription);
     printf("\n");
 }
-
+void show_player_2(Joueur j)
+{       
+    printf("%-12s | %-12s | %-3d | %-12s | %-7d | %-8s | %-3d | %-5d | ",
+           j.prenom[0] ? j.prenom : "NULL",
+           j.nom[0] ? j.nom : "NULL",
+           j.id,
+           j.poste[0] ? j.poste : "NULL",
+           j.num_maillot,
+           j.statut[0] ? j.statut : "NULL",
+           j.age,
+           j.buts);
+    afficher_date(j.dateInscription);
+    printf("\n");
+}
 // Trier les joueurs par ordre alphabétique (Nom).
 void swap(Joueur *a, Joueur *b)
 {
@@ -266,7 +335,7 @@ void trier_les_joueurs_alphabetiquement(Equipe *eq)
     {
         for (int j = 0; j < n - i - 1; j++)
         {
-            if (strcmp(eq->joueur[j].nom, eq->joueur[j + 1].nom) > 0)
+            if (strcasecmp(eq->joueur[j].nom, eq->joueur[j + 1].nom) < 0)
             {
                 swap(&eq->joueur[j], &eq->joueur[j + 1]);
             }
@@ -310,17 +379,17 @@ void afficher_equipe(Equipe eq)
         return;
     }
 
-    printf("\n========================================================= LISTE DES JOUEURS =========================================================\n");
-    printf("%-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s | %-12s\n",
-           "ID", "Nom", "Prenom", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
-    printf("---------------------------------------------------------------------------------------------\n");
+    printf("\n======================================= LISTE DES JOUEURS =======================================\n");
+    printf("%-12s | %-12s | %-3s | %-12s | %-7s | %-8s | %-3s | %-5s | %-12s\n",
+           "Prenom", "Nom", "ID", "Poste", "Maillot", "Statut", "Age", "Buts", "Inscription");
+    printf("---------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < eq.effective; i++)
     {
-        show_player(eq.joueur[i]);
+        show_player_2(eq.joueur[i]);
     }
 
-    printf("======================================================================================================================================\n\n");
+    printf("===============================================================================================================\n\n");
 }
 
 // Afficher les joueurs par poste.
@@ -332,13 +401,14 @@ void trier_les_joueurs_par_poste(Equipe *eq)
     {
         for (int j = 0; j < n - i - 1; j++)
         {
-            if (strcmp(eq->joueur[j].poste, eq->joueur[j + 1].poste) > 0)
+            if (strcasecmp(eq->joueur[j].poste, eq->joueur[j + 1].poste) > 0)
             {
                 swap(&eq->joueur[j], &eq->joueur[j + 1]);
             }
         }
     }
 }
+
 void trier_les_joueurs_par_id(Equipe *eq)
 {
     int n = eq->effective;
@@ -371,7 +441,7 @@ void ajouter_multiple_joueur(Equipe *eq)
     getchar();
     for (int i = 0; i < nb; i++)
     {
-        printf("*********** Inserver joueur %d ********* \n", i + 1);
+        printf("*********** Inserer joueur %d ********* \n", i + 1);
         ajouter_un_nouveau_joueur(eq);
     }
 }
@@ -427,7 +497,7 @@ void supprimer_joueur(Equipe *eq, int id)
 
     if (index == -1)
     {
-        printf("Joueur avec ID %d introuvable.\n", id);
+        printf("%sJoueur avec ID %d introuvable.%s\n",red, id, ANSI_RESET);
         return;
     }
 
@@ -437,7 +507,7 @@ void supprimer_joueur(Equipe *eq, int id)
         eq->joueur[i] = eq->joueur[i + 1];
     }
 
-    eq->effective--; // réduire la taille logique
+    eq->effective--; 
     printf("Joueur avec ID %d supprimé avec succès.\n", id);
 }
 
@@ -459,7 +529,7 @@ void rechercher_un_joueur_par_nom(char nom[], Equipe eq)
     int found = 0;
     for (int i = 0; i < eq.effective; i++)
     {
-        if (strcmp(eq.joueur[i].nom, nom) == 0)
+        if (strcasecmp(eq.joueur[i].nom, nom) == 0)
         {
             printf("Le joueur existe a la position %d :\n", i + 1);
             show_player(eq.joueur[i]);
@@ -476,10 +546,10 @@ void afficher_menu_statistiques()
 {
     printf("\n========== MENU STATISTIQUES ==========\n");
     printf("1. Afficher le nombre total de joueurs\n");
-    printf("2. Afficher l'âge moyen des joueurs\n");
-    printf("3. Afficher les joueurs ayant marqué plus de X buts\n");
+    printf("2. Afficher l'age moyen des joueurs\n");
+    printf("3. Afficher les joueurs ayant marque plus de X buts\n");
     printf("4. Afficher le meilleur buteur\n");
-    printf("5. Afficher le joueur le plus jeune et le plus âgé\n");
+    printf("5. Afficher le joueur le plus jeune et le plus age\n");
     printf("=======================================\n");
     printf("Entrez votre choix : ");
 }

@@ -232,29 +232,36 @@ void clear_screen()
     system("clear");
 #endif
 }
-// ====== MAIN ======
+
 int main()
-{   full_run(5);
+{   //full_run(5);
     system("clear");
     
     Equipe equipe = init_equipe(10);
-
-    Joueur joueurs_init[5] = {
-        init_joueur(1, "Dupont", "Jean", 7, "attaquant", 25, 10, init_date_1(10, 9, 2023), "titulaire"),
-        init_joueur(2, "Martin", "Paul", 4, "milieu", 22, 5, init_date_1(5, 7, 2022), "remplacant"),
-        init_joueur(3, "Bernard", "Luc", 1, "gardien", 28, 8, init_date_1(12, 8, 2021), "titulaire"),
-        init_joueur(4, "Petit", "Marc", 3, "defenseur", 24, 12, init_date_1(3, 4, 2020), "titulaire"),
-        init_joueur(5, "Robert", "Louis", 9, "attaquant", 30, 15, init_date_1(15, 6, 2023), "remplacant")};
+    
+    Joueur joueurs_init[10] = {
+    init_joueur(1, "Messi", "Lionel", 10, "attaquant", 25, 73, init_date_1(1, 7, 2004), "TITULAIRE "),
+    init_joueur(2, "Xavi", "Hernandez", 6, "milieu", 32, 14, init_date_1(1, 7, 1998), "TITULAIRE "),
+    init_joueur(3, "Iniesta", "Andres", 8, "milieu", 28, 8, init_date_1(1, 7, 2002), "TITULAIRE "),
+    init_joueur(4, "Puyol", "Carles", 5, "defenseur", 34, 2, init_date_1(1, 7, 1999), "TITULAIRE "),
+    init_joueur(5, "Pique", "Gerard", 3, "defenseur", 25, 5, init_date_1(1, 7, 2008), "TITULAIRE "),
+    init_joueur(6, "Alves", "Dani", 2, "defenseur", 29, 6, init_date_1(1, 7, 2008), "TITULAIRE "),
+    init_joueur(7, "Busquets", "Sergio", 16, "milieu", 24, 3, init_date_1(1, 7, 2008), "TITULAIRE "),
+    init_joueur(8, "Pedro", "Rodriguez", 17, "attaquant", 25, 13, init_date_1(1, 7, 2008), "REMPLACANT"),
+    init_joueur(9, "Villa", "David", 7, "attaquant", 30, 9, init_date_1(1, 7, 2010), "REMPLACANT"),
+    init_joueur(10, "Valdes", "Victor", 1, "gardien", 30, 0, init_date_1(1, 7, 2002), "TITULAIRE ")
+};
 
     
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
         equipe.joueur[equipe.effective++] = joueurs_init[i];
     }
-
+    
+    //charger_joueurs("joueur.txt",equipe.joueur,equipe.capacite);
     int choix;
     do
-    {
+    { 
         printf("\t");
         printf("\t%s************** MENU *****************%s\n", cyan, ANSI_RESET);
         printf("\t");
