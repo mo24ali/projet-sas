@@ -183,6 +183,7 @@ void clear_screen() {
 // ====== MAIN ======
 int main()
 {   full_run(5);
+    system("clear");
     // Initialiser l'équipe avec capacité de 10 joueurs
     Equipe equipe = init_equipe(10);
 
