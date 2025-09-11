@@ -1,41 +1,41 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
-
+// #include <windows.h>
+#define ANSI_RESET "\033[0m"
 #define M_PI 3.14159265358979323846
 
-struct vec3
+typedef struct
 {
     double x;
     double y;
     double z;
-};
+} vec3;
 
-struct vec2
+typedef struct
 {
     double x;
     double y;
-};
+} vec2;
 
-struct cube
+typedef struct
 {
-    struct vec3 rotation;
-    struct vec2 position;
+    vec3 rotation;
+    vec2 position;
     double size;
-};
+} cube;
 
-struct convexHull
+typedef struct
 {
-    struct vec2 *points;
+    vec2 *points;
     int size;
-};
+} convexHull;
 
-struct winsize
+typedef struct
 {
     int ws_row;
     int ws_col;
-};
+} winsize;
 
 void enableVirtualTerminalProcessing()
 {
@@ -52,14 +52,14 @@ void clearScreen()
 }
 
 int color = 31;
-struct vec2 aspectRatio = {1, 1};
+vec2 aspectRatio = {1, 1};
 
-double crossProduct(struct vec2 A, struct vec2 B, struct vec2 C)
+double crossProduct(vec2 A, vec2 B, vec2 C)
 {
     return (B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x);
 }
 
-void sortPoints(struct vec2 *points, size_t size)
+void sortPoints(vec2 *points, size_t size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -68,7 +68,7 @@ void sortPoints(struct vec2 *points, size_t size)
             if (points[j].x < points[i].x ||
                 (points[j].x == points[i].x && points[j].y < points[i].y))
             {
-                struct vec2 temp = points[i];
+                vec2 temp = points[i];
                 points[i] = points[j];
                 points[j] = temp;
             }
@@ -76,10 +76,10 @@ void sortPoints(struct vec2 *points, size_t size)
     }
 }
 
-struct convexHull *computeConvexHull(struct vec2 *points, size_t size)
+convexHull *computeConvexHull(vec2 *points, size_t size)
 {
     sortPoints(points, size);
-    struct vec2 *hull = malloc(sizeof(struct vec2) * size * 2);
+    vec2 *hull = malloc(sizeof(vec2) * size * 2);
     int k = 0;
     for (int i = 0; i < size; i++)
     {
@@ -97,13 +97,13 @@ struct convexHull *computeConvexHull(struct vec2 *points, size_t size)
         }
         hull[k++] = points[i];
     }
-    struct convexHull *ch = malloc(sizeof(struct convexHull));
+    convexHull *ch = malloc(sizeof(convexHull));
     ch->points = hull;
     ch->size = k;
     return ch;
 }
 
-int isInsideConvexHull(struct vec2 P, struct convexHull *ch)
+int isInsideConvexHull(vec2 P, convexHull *ch)
 {
     for (int i = 1; i < ch->size; i++)
     {
@@ -116,7 +116,7 @@ int isInsideConvexHull(struct vec2 P, struct convexHull *ch)
     return 1;
 }
 
-void getBounds(struct vec2 *points, size_t size, struct vec2 *minBound, struct vec2 *maxBound)
+void getBounds(vec2 *points, size_t size, vec2 *minBound, vec2 *maxBound)
 {
     *minBound = points[0];
     *maxBound = points[0];
@@ -133,7 +133,7 @@ void getBounds(struct vec2 *points, size_t size, struct vec2 *minBound, struct v
     }
 }
 
-void drawBall(struct vec2 center, double radius, struct winsize *w)
+void drawBall(vec2 center, double radius, winsize *w)
 {
     int cols = w->ws_col;
     int rows = w->ws_row;
@@ -164,44 +164,48 @@ void drawBall(struct vec2 center, double radius, struct winsize *w)
     }
 }
 
-void drawSoccerBall(struct cube *ball, struct winsize *w) {
+void drawSoccerBall(cube *ball, winsize *w)
+{
     int cols = w->ws_col;
     int rows = w->ws_row;
 
-    double r = ball->size;         // نصف القطر
-    double cx = ball->position.x;  // مركز الكرة (0..1)
+    double r = ball->size;
+    double cx = ball->position.x;
     double cy = ball->position.y;
 
-    printf("\033[H"); // رجع الكورسر لبداية الشاشة
-
-    for (int y = 0; y < rows; y++) {
-        for (int x = 0; x < cols; x++) {
+    printf("\033[H");
+    for (int y = 0; y < rows; y++)
+    {
+        for (int x = 0; x < cols; x++)
+        {
             double nx = (double)x / cols;
             double ny = (double)y / rows;
 
             double dx = (nx - cx) / r;
             double dy = (ny - cy) / r;
 
-            if (dx*dx + dy*dy <= 1.0) {           // داخل الكرة
-                // باش نعمل “زواق” نستعمل خط منسوب للدوران
-                double stripe = fmod(fabs(dx*5 + dy*5 + ball->rotation.z), 1.0);
+            if (dx * dx + dy * dy <= 1.0)
+            {
+                double stripe = fmod(fabs(dx * 5 + dy * 5 + ball->rotation.z), 1.0);
                 if (stripe < 0.15)
-                    printf("\033[30m#");          // خطوط سوداء
+                    printf("\033[30m#"); 
                 else
-                    printf("\033[37mO");          // الخلفية بيضاء
-            } else {
-                printf(" ");                       // برا الكرة
+                    printf("\033[37mO"); 
+            }
+            else
+            {
+                printf(" "); 
             }
         }
         printf("\n");
     }
 }
 
-void draw(struct vec2 faces[3][4], char chars[], struct winsize *w)
+void draw(vec2 faces[3][4], char chars[], winsize *w)
 {
-    struct vec2 minBound, maxBound;
-    getBounds((struct vec2 *)faces, 12, &minBound, &maxBound);
-    struct convexHull *hulls[3];
+    vec2 minBound, maxBound;
+    getBounds((vec2 *)faces, 12, &minBound, &maxBound);
+    convexHull *hulls[3];
     for (int i = 0; i < 3; i++)
     {
         hulls[i] = computeConvexHull(faces[i], 4);
@@ -227,8 +231,8 @@ void draw(struct vec2 faces[3][4], char chars[], struct winsize *w)
     {
         for (int j = x0; j < size_x; j++)
         {
-            struct vec2 P = {(double)j * aspectRatio.x / w->ws_col,
-                             (double)i * aspectRatio.y / w->ws_row};
+            vec2 P = {(double)j * aspectRatio.x / w->ws_col,
+                      (double)i * aspectRatio.y / w->ws_row};
             int inside = 0;
             for (int c = 0; c < 3; c++)
             {
@@ -275,7 +279,7 @@ void draw(struct vec2 faces[3][4], char chars[], struct winsize *w)
     }
 }
 
-void updateBall(struct cube *ball, struct vec2 *velocity, struct vec3 *rotational_velocity)
+void updateBall(cube *ball, vec2 *velocity, vec3 *rotational_velocity)
 {
     ball->position.x += velocity->x;
     ball->position.y += velocity->y;
@@ -290,7 +294,7 @@ void updateBall(struct cube *ball, struct vec2 *velocity, struct vec3 *rotationa
         ball->rotation.z -= 2 * M_PI;
 }
 
-void rotate(struct vec3 *points, size_t size, struct vec3 rotation)
+void rotate(vec3 *points, size_t size, vec3 rotation)
 {
     for (int i = 0; i < size; i++)
     {
@@ -312,8 +316,8 @@ void rotate(struct vec3 *points, size_t size, struct vec3 rotation)
     }
 }
 
-void project(struct vec3 *points, struct vec2 *projection, size_t size,
-             struct vec2 position, double cube_size)
+void project(vec3 *points, vec2 *projection, size_t size,
+             vec2 position, double cube_size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -322,9 +326,9 @@ void project(struct vec3 *points, struct vec2 *projection, size_t size,
     }
 }
 
-void updateFaces(struct cube *cube, struct vec2 projections[3][4])
+void updateFaces(cube *cube, vec2 projections[3][4])
 {
-    struct vec3 faces[6][4] = {
+    vec3 faces[6][4] = {
         {{1, 1, 1}, {1, -1, 1}, {1, -1, -1}, {1, 1, -1}},
         {{-1, 1, 1}, {-1, -1, 1}, {-1, -1, -1}, {-1, 1, -1}},
         {{1, 1, 1}, {1, 1, -1}, {-1, 1, -1}, {-1, 1, 1}},
@@ -333,7 +337,7 @@ void updateFaces(struct cube *cube, struct vec2 projections[3][4])
         {{1, 1, -1}, {1, -1, -1}, {-1, -1, -1}, {-1, 1, -1}},
     };
 
-    struct vec3 normals[6] = {
+    vec3 normals[6] = {
         {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
     rotate(normals, 6, cube->rotation);
@@ -354,11 +358,11 @@ void updateColor()
     color = (color + 1) % 5 + 31;
 }
 
-void handleEdgeCollision(struct vec2 faces[3][4], struct vec2 *velocity,
-                         struct vec3 *rotational_velocity)
+void handleEdgeCollision(vec2 faces[3][4], vec2 *velocity,
+                         vec3 *rotational_velocity)
 {
-    struct vec2 minBound, maxBound;
-    getBounds((struct vec2 *)faces, 12, &minBound, &maxBound);
+    vec2 minBound, maxBound;
+    getBounds((vec2 *)faces, 12, &minBound, &maxBound);
     if (minBound.x < 0 && velocity->x < 0)
     {
         velocity->x = fabs(velocity->x);
@@ -385,7 +389,7 @@ void handleEdgeCollision(struct vec2 faces[3][4], struct vec2 *velocity,
     }
 }
 
-void updateAspectRatio(struct winsize *w)
+void updateAspectRatio(winsize *w)
 {
     int size_x = w->ws_col;
     int size_y = w->ws_row * 2;
@@ -401,7 +405,7 @@ void updateAspectRatio(struct winsize *w)
     }
 }
 
-void getConsoleSize(struct winsize *w)
+void getConsoleSize(winsize *w)
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -461,12 +465,12 @@ void showGoodbyeMessage()
 
 void full_run(int duration_seconds)
 {
-    struct cube cube = {{0.1, 0.2, 0.3}, {0.5, 0.5}, 0.3};
-    struct vec2 faces[3][4];
+    cube cube = {{0.1, 0.2, 0.3}, {0.5, 0.5}, 0.3};
+    vec2 faces[3][4];
     char chars[3] = {'#', '*', '~'};
-    struct vec2 velocity = {0.01, 0.01};
-    struct vec3 rotational_velocity = {0.05, 0.05, 0};
-    struct winsize w;
+    vec2 velocity = {0.01, 0.01};
+    vec3 rotational_velocity = {0.05, 0.05, 0};
+    winsize w;
     int frames = duration_seconds * 25;
 
     enableVirtualTerminalProcessing();

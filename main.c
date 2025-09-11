@@ -340,9 +340,7 @@ int main()
             printf("\t");
             //showGoodbyeMessage();
             //Sleep(1000);
-            //sleep(1000);
             //system("cls");
-            system("clear");
             exit(0);
         default:
             printf("\t");
