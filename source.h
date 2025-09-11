@@ -210,6 +210,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         strcpy(pos, postes[3]);
         break;
     default:
+        printf("%s LE CHOIX EST INVALIDE MAIS ON VA L'INSERER AUTAUNT QUE ATTAQUANT POUR LE MOMENT ! \n PRIERE DE REGLER LE POSTE ULTIRIEREMENT !\n%s",red,ANSI_RESET);
         strcpy(pos, postes[3]);
         break;
     }
@@ -337,6 +338,24 @@ void trier_les_joueurs_par_poste(Equipe *eq)
         }
     }
 }
+void trier_les_joueurs_par_id(Equipe *eq)
+{
+    int n = eq->effective;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (eq->joueur[j].id > eq->joueur[j+1].id)
+            {
+                swap(&eq->joueur[j], &eq->joueur[j + 1]);
+            }
+        }
+    }
+}
+void afficher_les_joueurs_par_id(Equipe eq){
+    trier_les_joueurs_par_id(&eq);
+    afficher_equipe(eq);
+}
 void afficher_les_joueurs_par_postes(Equipe eq)
 {
     trier_les_joueurs_par_poste(&eq);
@@ -383,6 +402,7 @@ void modifier_un_joueur_age(int id, int new_age, Equipe *eq)
         printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
     }
 }
+
 // Modifier le nombre de buts marqués par un joueur.
 void modifier_un_joueur_buts(int id, int new_buts, Equipe *eq)
 {

@@ -279,7 +279,7 @@ void getConsoleSize(struct winsize *w) {
     w->ws_col = csbi.srWindow.Right - csbi.srWindow.Left + 1;
     w->ws_row = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
-#include <windows.h> // For Sleep
+
 
 void showWelcomeMessage() {
     const char *welcome[] = {
@@ -289,7 +289,8 @@ void showWelcomeMessage() {
         "   \\ V  V /  __/ | (_| (_) | | | | | |  __/ | || (_) |   ",
         "    \\_/\\_/ \\___|_|\\___\\___/|_| |_| |_|\\___|  \\__\\___/ ",
         "",
-        "                WELCOME TO THE APP                      "
+        "                WELCOME TO THE APP                      \n"
+        "                   FOOTBALL CLUB MANAGER                      "
     };
 
     int lines = sizeof(welcome) / sizeof(welcome[0]);
@@ -324,22 +325,15 @@ void full_run(int duration_seconds) {
         draw(faces, chars, &w);
         handleEdgeCollision(faces, &velocity, &rotational_velocity);
         updateBall(&cube, &velocity, &rotational_velocity);
-        Sleep(30); // Frame delay (30ms = ~33 FPS)
+        Sleep(15); 
     }
 
-    Sleep(500);       // Short pause before welcome
-    clearScreen();    // Clear screen before showing welcome
+    Sleep(500);      
+    clearScreen();   
     showWelcomeMessage();
 
-    Sleep(4000);      // Display welcome message for 4 seconds
-    clearScreen();    // Clear after welcome message
+    Sleep(2000);      
+    clearScreen();    
 
-    printf("\e[?25h"); // Show cursor again
+    printf("\e[?25h"); 
 }
-
-/*int main() {
-    
-    full_run(10); // Run animation for 10 seconds
-    return 0;
-}
-*/
