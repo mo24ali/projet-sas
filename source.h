@@ -235,6 +235,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     printf("Joueur ajoute avec succes ! ID = %d\n", j.id);
 }
 
+
 // AFFICHER JOUEUR
 void show_player(Joueur j)
 {
