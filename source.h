@@ -221,17 +221,26 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         num_buts = 0;
 
     lire_chaine("Entrez le jour de l'inscription :\n", tmp, sizeof(tmp));
-    if (sscanf(tmp, "%d", &j_insc) != 1)
+    if (sscanf(tmp, "%d", &j_insc) != 1){
         j_insc = 1;
+    }else if(j_insc < 1  && j_insc> 31 ){
+        printf("L'entree invalide !!");
+        j_insc = 1;
+    }
+        
 
     lire_chaine("Entrez le mois de l'inscription :\n", tmp, sizeof(tmp));
-    if (sscanf(tmp, "%d", &m_insc) != 1)
+    if (sscanf(tmp, "%d", &m_insc) != 1){
         m_insc = 1;
+    }else if(m_insc < 1 && m_insc > 12){
+        m_insc = 1;
+    }
+        
 
     lire_chaine("Entrez l'annee d'inscription :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &a_insc) != 1)
         a_insc = 2025;
-
+        
     Date dt = init_date_1(j_insc, m_insc, a_insc);
 
     // choix de status
