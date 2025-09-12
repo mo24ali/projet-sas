@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
 #define ANSI_RESET "\033[0m"
 #define black "\033[0;30m"
@@ -62,9 +63,10 @@ void afficher_date(Date dt)
     printf("%d / %d / %d ", dt.j, dt.m, dt.a);
 }
 
-int calculer_age(int a)
-{
-    return 2025 - a;
+int calculer_age(int a) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    return tm.tm_year + 1900 - a;
 }
 Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag, int bt, Date dt, char st[])
 {
@@ -166,6 +168,16 @@ void lire_chaine(char *message, char *buffer, int size)
 const char postes[4][MAX_CHAR] = {"gardien", "defenseur", "milieu", "attaquant"};
 const char statut[2][MAX_CHAR] = {"TITULAIRE", "REMPLACANT"};
 // AJOUTER UN SEUL JOUEUR
+// Vérifie si un numéro de maillot existe déjà dans l'équipe
+int maillot_existe(Equipe *eq, int numero) {
+    for (int i = 0; i < eq->effective; i++) {
+        if (eq->joueur[i].num_maillot == numero) {
+            return 1; // trouvé
+        }
+    }
+    return 0; // libre
+}
+
 void ajouter_un_nouveau_joueur(Equipe *eq)
 {
     Joueur j;
@@ -181,23 +193,22 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     int choix_pos;
     int choix_status;
     int j_insc, m_insc, a_insc;
+    char tmp[64];
 
     lire_chaine("Entrez le nom :\n", nom, sizeof(nom));
     lire_chaine("Entrez le prenom :\n", prenom, sizeof(prenom));
 
-    // lire entiers - on utilise fgets + sscanf pour éviter les restes dans stdin
-    char tmp[64];
-
-    /**
-     * lire chaine affiche le message de demande de input
-     * prend comme argument le message, le buffer pour lire l'input et size de input
-     * size est donné par sizeof lors de l'execution
-     *
-     * lire par fgets et traite la situation de blocage de buffer par le retour a la ligne
-     */
-    lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
-    if (sscanf(tmp, "%d", &maillot) != 1)
-        maillot = 0;
+    // 🔹 Numéro de maillot unique
+    do {
+        lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
+        if (sscanf(tmp, "%d", &maillot) != 1) {
+            printf("⚠️ Entree invalide, veuillez entrer un nombre !\n");
+            maillot = -1;
+        } else if (maillot_existe(eq, maillot)) {
+            printf("⚠️ Le numero de maillot %d est deja pris, choisissez un autre.\n", maillot);
+            maillot = -1;
+        }
+    } while (maillot < 0);
 
     lire_chaine("Entrez l'annee de naissance :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &annee_de_naissance) != 1)
@@ -223,7 +234,8 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
     Date dt = init_date_1(j_insc, m_insc, a_insc);
 
-    lire_chaine("Le joueur est: \n \t 1. titulaire \n \t 2. remplacant \n", status, sizeof(status));
+    // 🔹 Choix statut
+    lire_chaine("Le joueur est: \n \t 1. titulaire \n \t 2. remplacant \n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_status) != 1)
         choix_status = 2;
     switch (choix_status)
@@ -238,7 +250,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         strcpy(status, statut[1]);
     }
 
-    // Choix poste
+    // 🔹 Choix poste
     lire_chaine("\t \n 1) gardien.  \n 2) defenseur.  \n 3) milieu.  \n 4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_pos) != 1)
         choix_pos = 4;
@@ -257,14 +269,15 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         strcpy(pos, postes[3]);
         break;
     default:
-        printf("%s LE CHOIX EST INVALIDE MAIS ON VA L'INSERER AUTAUNT QUE ATTAQUANT POUR LE MOMENT ! \n PRIERE DE REGLER LE POSTE ULTIRIEREMENT !\n%s", red, ANSI_RESET);
+        printf("%s LE CHOIX EST INVALIDE, ON VA L'INSERER COMME ATTAQUANT ! \n PRIERE DE REGLER LE POSTE ULTÉRIEUREMENT !\n%s", red, ANSI_RESET);
         strcpy(pos, postes[3]);
         break;
     }
 
+    // Création du joueur
     j = init_joueur(id, nom, prenom, maillot, pos, age, num_buts, dt, status);
 
-    // si besoin, agrandir (ton code faisait ça déjà)
+    // Vérifier la capacité
     if (eq->effective >= eq->capacite)
     {
         int newcap = eq->capacite * 2;
@@ -279,7 +292,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     }
 
     eq->joueur[eq->effective++] = j;
-    printf("Joueur ajoute avec succes ! ID = %d\n", j.id);
+    printf("✅ Joueur ajoute avec succes ! ID = %d, Maillot = %d\n", j.id, j.num_maillot);
 }
 
 // AFFICHER JOUEUR
@@ -572,6 +585,7 @@ void modifier_un_joueur_poste(int id, Equipe *eq)
     printf("Votre choix : \n");
 
     int choix;
+
     if (scanf("%d", &choix) != 1) {
         printf("%sEntrée invalide.%s\n", red, ANSI_RESET);
         while (getchar() != '\n');  
@@ -588,7 +602,7 @@ void modifier_un_joueur_poste(int id, Equipe *eq)
 }
 
 // Modifier l’âge d’un joueur.
-void modifier_un_joueur_age(int id, int new_age, Equipe *eq)
+void modifier_un_joueur_age(int id, int nv_age, Equipe *eq)
 {
     // Vérifier d'abord si l'ID existe
     int index = rechercher_joueur_index(id, eq);
@@ -598,14 +612,14 @@ void modifier_un_joueur_age(int id, int new_age, Equipe *eq)
     }
 
     // Vérifier la validité de l'âge
-    if (new_age < 18 || new_age > 45) {
+    if (nv_age < 18 || nv_age > 45) {
         printf("%sAge invalide : %d (doit etre entre 18 et 45).%s\n",
-               red, new_age, ANSI_RESET);
+               red, nv_age, ANSI_RESET);
         return;
     }
 
     // Mise à jour si tout est correct
-    eq->joueur[index].age = new_age;
+    eq->joueur[index].age = nv_age;
     printf("%sÂge du joueur modifie avec succes.%s\n", green, ANSI_RESET);
 }
 // Modifier le nombre de buts marques par un joueur.

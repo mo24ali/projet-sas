@@ -271,31 +271,38 @@ void case5(Equipe *equipe)
 void case6(Equipe *equipe)
 {
     int choix6;
-    afficher_menu_statistiques();
-    scanf("%d", &choix6);
-    getchar();
     do
     {
+        afficher_menu_statistiques();
+        if (scanf("%d", &choix6) != 1) {
+            // si entrée invalide (lettre, etc.)
+            printf("⚠️ Entree invalide, veuillez entrer un nombre !\n");
+            while (getchar() != '\n'); // vider buffer
+            choix6 = -1; // force à continuer
+            continue;
+        }
+
         switch (choix6)
         {
         case 0:
             clear_screen();
             break;
         case 1:
-            printf("\t");
-            printf("Le nombre total des joueurs dans l'equipe : %d\n", equipe->effective);
+            printf("\tLe nombre total des joueurs dans l'equipe : %d\n", equipe->effective);
             break;
         case 2:
-            printf("\t");
-            printf("L'age moyen des joueurs : %.2f\n", moyenne(*equipe));
+            printf("\tL'age moyen des joueurs : %.2f\n", moyenne(*equipe));
             break;
         case 3:
         {
             int x;
-            printf("\t");
-            printf("Entrer le nombre des buts X : \n");
-            scanf("%d", &x);
-            afficher_joueurs_marque_plus_X_buts(*equipe, x);
+            printf("\tEntrer le nombre des buts X : \n");
+            if (scanf("%d", &x) == 1) {
+                afficher_joueurs_marque_plus_X_buts(*equipe, x);
+            } else {
+                printf("⚠️ Entree invalide pour X !\n");
+                while (getchar() != '\n'); // vider buffer
+            }
             break;
         }
         case 4:
@@ -305,16 +312,30 @@ void case6(Equipe *equipe)
             afficher_le_joueur_le_plus_jeune_et_le_plus_age(*equipe);
             break;
         default:
-            printf("\t");
-            printf("%sChoix invalide !%s\n", red, ANSI_RESET);
+            printf("\t%sChoix invalide !%s\n", red, ANSI_RESET);
         }
-    } while (choix6 != 0);
+
+    } while (choix6 != 0); // sortir avec 0
 }
 
+
+
+int lire_entier() {
+    int choix;
+    char c;
+    while (1) {
+        if (scanf("%d%c", &choix, &c) != 2 || c != '\n') {
+            printf("\tEntree invalide, veuillez entrer un nombre !\n");
+            //vider_buffer();
+            while ((c = getchar()) != '\n' && c != EOF);
+            //getchar();
+        } else {
+            return choix;
+        }
+    }
+}
 int main()
-{ // full_run(5);
-    // main_animation(5);
-    // system("clear");
+{   full_run(5);
     clear_screen();
     Equipe equipe = init_equipe(10);
 
@@ -361,9 +382,10 @@ int main()
         printf("\t%s*       Choisir une option :               *%s\n", cyan, ANSI_RESET);
         printf("\t");
         printf("\t%s********************************************%s\n", cyan, ANSI_RESET);
-
-        scanf("%d", &choix);
-        getchar();
+        
+        
+        choix = lire_entier();
+        
 
         switch (choix)
         {
