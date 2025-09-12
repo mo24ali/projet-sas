@@ -198,14 +198,14 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     lire_chaine("Entrez le nom :\n", nom, sizeof(nom));
     lire_chaine("Entrez le prenom :\n", prenom, sizeof(prenom));
 
-    // 🔹 Numéro de maillot unique
+    // maillot unique
     do {
         lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
         if (sscanf(tmp, "%d", &maillot) != 1) {
-            printf("⚠️ Entree invalide, veuillez entrer un nombre !\n");
+            printf("Entree invalide, veuillez entrer un nombre !\n");
             maillot = -1;
         } else if (maillot_existe(eq, maillot)) {
-            printf("⚠️ Le numero de maillot %d est deja pris, choisissez un autre.\n", maillot);
+            printf("Le numero de maillot %d est deja pris, choisissez un autre.\n", maillot);
             maillot = -1;
         }
     } while (maillot < 0);
@@ -234,7 +234,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
 
     Date dt = init_date_1(j_insc, m_insc, a_insc);
 
-    // 🔹 Choix statut
+    // choix de status
     lire_chaine("Le joueur est: \n \t 1. titulaire \n \t 2. remplacant \n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_status) != 1)
         choix_status = 2;
@@ -250,7 +250,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         strcpy(status, statut[1]);
     }
 
-    // 🔹 Choix poste
+    //Choix poste
     lire_chaine("\t \n 1) gardien.  \n 2) defenseur.  \n 3) milieu.  \n 4) attaquant\nEntrez le numero du poste :\n", tmp, sizeof(tmp));
     if (sscanf(tmp, "%d", &choix_pos) != 1)
         choix_pos = 4;
