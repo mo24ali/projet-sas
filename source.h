@@ -81,8 +81,14 @@ Joueur init_joueur(int i, char nm[], char pnm[], int maillot, char pos[], int ag
     return j;
 }
 
-
-
+void clear_screen()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 Equipe init_equipe(int capacite)
 {
     Equipe e;
@@ -97,7 +103,7 @@ Equipe init_equipe(int capacite)
     return e;
 }
 
-//utilité
+// utilité
 int position_max_but(Equipe eq)
 {
     if (eq.effective == 0)
@@ -128,7 +134,7 @@ int genere_id(Equipe *eq)
         }
     }
 
-    return max_id + 1; 
+    return max_id + 1;
 }
 
 // supprime le '\n' final s'il existe
@@ -157,6 +163,8 @@ void lire_chaine(char *message, char *buffer, int size)
 }
 
 //  AJOUTER JOUEUR
+const char postes[4][MAX_CHAR] = {"gardien", "defenseur", "milieu", "attaquant"};
+const char statut[2][MAX_CHAR] = {"TITULAIRE", "REMPLACANT"};
 // AJOUTER UN SEUL JOUEUR
 void ajouter_un_nouveau_joueur(Equipe *eq)
 {
@@ -166,8 +174,6 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     char prenom[MAX_CHAR];
     char pos[MAX_CHAR];
     char status[MAX_CHAR];
-    char postes[4][MAX_CHAR] = {"gardien", "defenseur", "milieu", "attaquant"};
-    char statut[2][MAX_CHAR] = {"TITULAIRE","REMPLACANT"};
     int maillot;
     int annee_de_naissance;
     int age;
@@ -186,7 +192,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
      * lire chaine affiche le message de demande de input
      * prend comme argument le message, le buffer pour lire l'input et size de input
      * size est donné par sizeof lors de l'execution
-     * 
+     *
      * lire par fgets et traite la situation de blocage de buffer par le retour a la ligne
      */
     lire_chaine("Entrez le numero de maillot :\n", tmp, sizeof(tmp));
@@ -218,17 +224,18 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     Date dt = init_date_1(j_insc, m_insc, a_insc);
 
     lire_chaine("Le joueur est: \n \t 1. titulaire \n \t 2. remplacant \n", status, sizeof(status));
-    if(sscanf(tmp,"%d",&choix_status) != 1)
+    if (sscanf(tmp, "%d", &choix_status) != 1)
         choix_status = 2;
-    switch(choix_status){
-        case 1:
-            strcpy(status,statut[0]);
-            break;
-        case 2:
-            strcpy(status,statut[1]);
-            break;
-        default:
-            strcpy(status,statut[1]);
+    switch (choix_status)
+    {
+    case 1:
+        strcpy(status, statut[0]);
+        break;
+    case 2:
+        strcpy(status, statut[1]);
+        break;
+    default:
+        strcpy(status, statut[1]);
     }
 
     // Choix poste
@@ -250,7 +257,7 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
         strcpy(pos, postes[3]);
         break;
     default:
-        printf("%s LE CHOIX EST INVALIDE MAIS ON VA L'INSERER AUTAUNT QUE ATTAQUANT POUR LE MOMENT ! \n PRIERE DE REGLER LE POSTE ULTIRIEREMENT !\n%s",red,ANSI_RESET);
+        printf("%s LE CHOIX EST INVALIDE MAIS ON VA L'INSERER AUTAUNT QUE ATTAQUANT POUR LE MOMENT ! \n PRIERE DE REGLER LE POSTE ULTIRIEREMENT !\n%s", red, ANSI_RESET);
         strcpy(pos, postes[3]);
         break;
     }
@@ -274,7 +281,6 @@ void ajouter_un_nouveau_joueur(Equipe *eq)
     eq->joueur[eq->effective++] = j;
     printf("Joueur ajoute avec succes ! ID = %d\n", j.id);
 }
-
 
 // AFFICHER JOUEUR
 void show_player(Joueur j)
@@ -301,7 +307,7 @@ void show_player(Joueur j)
 }
 
 void show_player_2(Joueur j)
-{       
+{
     printf("%-12s | %-12s | %-3d | %-12s | %-7d | %-8s | %-3d | %-5d | ",
            j.prenom[0] ? j.prenom : "NULL",
            j.nom[0] ? j.nom : "NULL",
@@ -314,8 +320,9 @@ void show_player_2(Joueur j)
     afficher_date(j.dateInscription);
     printf("\n");
 }
-//bonus
-void star_de_lequipe(Equipe eq){
+// bonus
+void star_de_lequipe(Equipe eq)
+{
     int i = position_max_but(eq);
     printf("le STAR DE L'EQUIPE EST : \n");
     show_player(eq.joueur[i]);
@@ -342,49 +349,61 @@ void trier_les_joueurs_alphabetiquement(Equipe *eq)
         }
     }
 }
-//rechercher Joueurs (bonus)
-void rechercher_joueurs_par_poste(Equipe *eq, const char poste[]) {
-    if (eq->effective == 0) {
+// rechercher Joueurs (bonus)
+void rechercher_joueurs_par_poste(Equipe *eq, const char poste[])
+{
+    if (eq->effective == 0)
+    {
         printf("Aucun joueur dans l'equipe.\n");
         return;
     }
 
     int found = 0;
     printf("Liste des joueurs au poste '%s' :\n", poste);
-    for (int i = 0; i < eq->effective; i++) {
-        if (strcasecmp(eq->joueur[i].poste, poste) == 0) {
+    for (int i = 0; i < eq->effective; i++)
+    {
+        if (strcasecmp(eq->joueur[i].poste, poste) == 0)
+        {
             show_player(eq->joueur[i]);
             found = 1;
         }
     }
 
-    if (!found) {
-        printf("Aucun joueur trouvé pour le poste '%s'.\n", poste);
+    if (!found)
+    {
+        printf("Aucun joueur trouve pour le poste '%s'.\n", poste);
     }
 }
 
-void rechercher_joueurs_par_age(Equipe *eq, int age) {
-    if (eq->effective == 0) {
+void rechercher_joueurs_par_age(Equipe *eq, int age)
+{
+    if (eq->effective == 0)
+    {
         printf("Aucun joueur dans l'equipe.\n");
         return;
     }
 
     int found = 0;
     printf("Liste des joueurs ayant l'age %d :\n", age);
-    for (int i = 0; i < eq->effective; i++) {
-        if (eq->joueur[i].age == age) {
+    for (int i = 0; i < eq->effective; i++)
+    {
+        if (eq->joueur[i].age == age)
+        {
             show_player(eq->joueur[i]);
             found = 1;
         }
     }
 
-    if (!found) {
-        printf("Aucun joueur trouvé avec l'age %d.\n", age);
+    if (!found)
+    {
+        printf("Aucun joueur trouve avec l'age %d.\n", age);
     }
 }
 
-void rechercher_joueurs_par_tranche_d_age(Equipe *eq) {
-    if (eq->effective == 0) {
+void rechercher_joueurs_par_tranche_d_age(Equipe *eq)
+{
+    if (eq->effective == 0)
+    {
         printf("Aucun joueur dans l'equipe.\n");
         return;
     }
@@ -393,19 +412,22 @@ void rechercher_joueurs_par_tranche_d_age(Equipe *eq) {
     char buffer[32];
 
     printf("Entrez le minimum d'age : ");
-    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &minAge) != 1) {
-        printf("Entrée invalide. Valeur par défaut 0 utilisée.\n");
+    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &minAge) != 1)
+    {
+        printf("Entree invalide. Valeur par defaut 0 utilisee. \n");
         minAge = 0;
     }
 
     printf("Entrez le maximum d'age : ");
-    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &maxAge) != 1) {
-        printf("Entrée invalide. Valeur par défaut 100 utilisée.\n");
+    if (!fgets(buffer, sizeof(buffer), stdin) || sscanf(buffer, "%d", &maxAge) != 1)
+    {
+        printf("Entree invalide. Valeur par defaut 100 utilse. \n");
         maxAge = 100;
     }
 
-    if (minAge > maxAge) {
-        printf("Le minimum d'age est supérieur au maximum. Inversion automatique.\n");
+    if (minAge > maxAge)
+    {
+        printf("Le minimum d'age est superieur au maximum. Inversion automatique.\n");
         int tmp = minAge;
         minAge = maxAge;
         maxAge = tmp;
@@ -413,15 +435,18 @@ void rechercher_joueurs_par_tranche_d_age(Equipe *eq) {
 
     int found = 0;
     printf("Liste des joueurs ayant l'age entre %d et %d :\n", minAge, maxAge);
-    for (int i = 0; i < eq->effective; i++) {
-        if (eq->joueur[i].age >= minAge && eq->joueur[i].age <= maxAge) {
+    for (int i = 0; i < eq->effective; i++)
+    {
+        if (eq->joueur[i].age >= minAge && eq->joueur[i].age <= maxAge)
+        {
             show_player(eq->joueur[i]);
             found = 1;
         }
     }
 
-    if (!found) {
-        printf("Aucun joueur trouvé dans cette tranche d'age.\n");
+    if (!found)
+    {
+        printf("Aucun joueur trouve dans cette tranche d'age.\n");
     }
 }
 
@@ -499,14 +524,15 @@ void trier_les_joueurs_par_id(Equipe *eq)
     {
         for (int j = 0; j < n - i - 1; j++)
         {
-            if (eq->joueur[j].id > eq->joueur[j+1].id)
+            if (eq->joueur[j].id > eq->joueur[j + 1].id)
             {
                 swap(&eq->joueur[j], &eq->joueur[j + 1]);
             }
         }
     }
 }
-void afficher_les_joueurs_par_id(Equipe eq){
+void afficher_les_joueurs_par_id(Equipe eq)
+{
     trier_les_joueurs_par_id(&eq);
     afficher_equipe(eq);
 }
@@ -530,45 +556,75 @@ void ajouter_multiple_joueur(Equipe *eq)
 }
 // MODIFIER UN JOUEUR
 // Modifier le poste d’un joueur.
-void modifier_un_joueur_poste(int id, char new_pos[], Equipe *eq)
-{
+void modifier_un_joueur_poste(int id, Equipe *eq)
+{   int NB_POSTES = sizeof(postes)/MAX_CHAR;
     int index = rechercher_joueur_index(id, eq);
-    if (index != -1)
-    {
-        strcpy(eq->joueur[index].poste, new_pos);
+    if (index == -1) {
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s\n", red, ANSI_RESET);
+        return;
     }
-    else
-    {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
+
+    
+    printf("=== Choisissez un nouveau poste ===\n");
+    for (int i = 0; i < NB_POSTES; i++) {
+        printf("%d) %s\n", i + 1, postes[i]);
     }
+    printf("Votre choix : \n");
+
+    int choix;
+    if (scanf("%d", &choix) != 1) {
+        printf("%sEntrée invalide.%s\n", red, ANSI_RESET);
+        while (getchar() != '\n');  
+        return;
+    }
+
+    if (choix < 1 || choix > NB_POSTES) {
+        printf("%sLe choix est invalide !!!%s\n", red, ANSI_RESET);
+        return;
+    }
+
+    strcpy(eq->joueur[index].poste, postes[choix - 1]);
+    printf("%sPoste du joueur modifie avec succes.%s\n", green, ANSI_RESET);
 }
 
 // Modifier l’âge d’un joueur.
 void modifier_un_joueur_age(int id, int new_age, Equipe *eq)
 {
+    // Vérifier d'abord si l'ID existe
     int index = rechercher_joueur_index(id, eq);
-    if (index != -1)
-    {
-        eq->joueur[index].age = new_age;
+    if (index == -1) {
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s\n", red, ANSI_RESET);
+        return;
     }
-    else
-    {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
-    }
-}
 
-// Modifier le nombre de buts marqués par un joueur.
+    // Vérifier la validité de l'âge
+    if (new_age < 18 || new_age > 45) {
+        printf("%sAge invalide : %d (doit etre entre 18 et 45).%s\n",
+               red, new_age, ANSI_RESET);
+        return;
+    }
+
+    // Mise à jour si tout est correct
+    eq->joueur[index].age = new_age;
+    printf("%sÂge du joueur modifie avec succes.%s\n", green, ANSI_RESET);
+}
+// Modifier le nombre de buts marques par un joueur.
 void modifier_un_joueur_buts(int id, int new_buts, Equipe *eq)
 {
     int index = rechercher_joueur_index(id, eq);
-    if (index != -1)
-    {
-        eq->joueur[index].buts = new_buts;
+    if (index == -1) {
+        printf("%sLE JOUEUR N'EXISTE PAS !!!%s\n", red, ANSI_RESET);
+        return;
     }
-    else
-    {
-        printf("%sLE JOUEUR N'EXISTE PAS !!!%s", red, ANSI_RESET);
+
+    if (new_buts < 0) {
+        printf("%sLe nombre de buts ne peut pas etre negatif (%d).%s\n",
+               red, new_buts, ANSI_RESET);
+        return;
     }
+
+    eq->joueur[index].buts = new_buts;
+    printf("%sNombre de buts modifie avec succes.%s\n", green, ANSI_RESET);
 }
 // SUPPRIMER UN JOUEUR
 
@@ -580,7 +636,7 @@ void supprimer_joueur(Equipe *eq, int id)
 
     if (index == -1)
     {
-        printf("%sJoueur avec ID %d introuvable.%s\n",red, id, ANSI_RESET);
+        printf("%sJoueur avec ID %d introuvable.%s\n", red, id, ANSI_RESET);
         return;
     }
 
@@ -590,8 +646,8 @@ void supprimer_joueur(Equipe *eq, int id)
         eq->joueur[i] = eq->joueur[i + 1];
     }
 
-    eq->effective--; 
-    printf("Joueur avec ID %d supprimé avec succès.\n", id);
+    eq->effective--;
+    printf("Joueur avec ID %d supprime avec succes.\n", id);
 }
 
 // RECHERCHER  UN JOUEUR
@@ -633,6 +689,7 @@ void afficher_menu_statistiques()
     printf("3. Afficher les joueurs ayant marque plus de X buts\n");
     printf("4. Afficher le meilleur buteur\n");
     printf("5. Afficher le joueur le plus jeune et le plus age\n");
+    printf("%s ==> entrez 0 pour retourner au menu principal <== %s\n", green, ANSI_RESET);
     printf("=======================================\n");
     printf("Entrez votre choix : ");
 }
@@ -711,7 +768,6 @@ void afficher_le_joueur_le_plus_jeune_et_le_plus_age(Equipe eq)
     show_player(eq.joueur[jeune]);
 }
 
-
 void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
 {
     int found = 0;
@@ -722,7 +778,7 @@ void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
         {
             if (!found)
             {
-                printf("Liste des joueurs ayant marqué plus de %d buts :\n", x);
+                printf("Liste des joueurs ayant marque plus de %d buts :\n", x);
             }
             show_player(eq.joueur[i]);
             found = 1;
@@ -731,7 +787,7 @@ void afficher_joueurs_marque_plus_X_buts(Equipe eq, int x)
 
     if (!found)
     {
-        printf("Aucun joueur n'a marqué plus de %d buts.\n", x);
+        printf("Aucun joueur n'a marque plus de %d buts.\n", x);
     }
 }
 

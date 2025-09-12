@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include <windows.h>
+#include <windows.h>
 #define ANSI_RESET "\033[0m"
 #define M_PI 3.14159265358979323846
 
@@ -428,15 +428,15 @@ void showWelcomeMessage()
 
     int lines = sizeof(welcome) / sizeof(welcome[0]);
 
-    printf("\033[1m"); // Enable bold
+    printf("\033[1m"); 
 
     for (int i = 0; i < lines; i++)
     {
         printf("   %s\n", welcome[i]);
-        Sleep(150); // small delay between lines for fade-in effect
+        Sleep(150); 
     }
 
-    printf("%s", ANSI_RESET); // Reset formatting
+    printf("%s", ANSI_RESET); 
 }
 void showGoodbyeMessage()
 {
@@ -452,15 +452,15 @@ void showGoodbyeMessage()
 
     int lines = sizeof(goodbye) / sizeof(goodbye[0]);
 
-    printf("\033[1m"); // Enable bold
+    printf("%s",cyan); 
 
     for (int i = 0; i < lines; i++)
     {
-        printf("   %s\n", goodbye[i]);
-        Sleep(150); // small delay between lines for fade-in effect
+        printf("%s   %s\n", goodbye[i],bold_cyan);
+        Sleep(150); 
     }
 
-    printf("%s", ANSI_RESET); // Reset formatting
+    printf("%s", ANSI_RESET); 
 }
 
 void full_run(int duration_seconds)
