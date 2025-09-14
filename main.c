@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "source.h"
-#include "animation_windows.h"
+//#include "animation_windows.h" // uncomment this and comment animation.h for windows usage
+#include "animation.h"
 void case1(Equipe *equipe)
 {
     int ajout;
@@ -417,7 +418,7 @@ int main()
             printf("\t");
             showGoodbyeMessage();
             Sleep(1000);
-            system("cls");
+            system("clear");
             exit(0);
         default:
             printf("\t");
