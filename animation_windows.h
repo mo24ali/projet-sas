@@ -405,6 +405,7 @@
         }
     }
 
+    
     void getConsoleSize(winsize *w)
     {
         CONSOLE_SCREEN_BUFFER_INFO csbi;

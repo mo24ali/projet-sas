@@ -20,7 +20,11 @@ typedef struct { int ws_row, ws_col; } winsize;
 vec2 aspectRatio = {1, 1};
 
 void clearScreen() {
-    printf("\033[H\033[J");
+   #ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 // ---------- Sphere generator ----------
@@ -127,6 +131,7 @@ void showWelcomeMessage() {
 }
 
 void showGoodbyeMessage() {
+    clearScreen();
     const char *goodbye[] = {
         "         _____                  _      ",
         "     /\\          |  __ \\               (_)     ",
